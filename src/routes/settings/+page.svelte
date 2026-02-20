@@ -1,7 +1,4 @@
 <script lang="ts">
-	function test() {
-		console.log('Test function called');
-	}
 </script>
 
 <section>
@@ -11,7 +8,7 @@
 	<label for="cycle-length">Cycle Length</label>
 	<input id="cycle-length" type="number" min="20" max="35" value="28" />
 
-	<input type="submit" onclick={test} />
+	<input type="submit" />
 </section>
 
 <style>
