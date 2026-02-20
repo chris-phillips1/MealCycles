@@ -1,6 +1,5 @@
 import { loadAppData, saveAppData } from '$lib/utils/storage';
 import type {
-	AppData,
 	Cycle,
 	Ingredient,
 	Meal,
@@ -21,14 +20,9 @@ let ingredients = $state(initialData.ingredients);
 let meals = $state(initialData.meals);
 let mealPlans = $state(initialData.mealPlans);
 
-// ============================================
-// AUTO-SAVE
-// ============================================
-
-$effect(() => {
-	const data: AppData = { cycle, ingredients, meals, mealPlans };
-	saveAppData(data);
-});
+function save() {
+	saveAppData({ cycle, ingredients, meals, mealPlans });
+}
 
 // ============================================
 // CYCLE FUNCTIONS
@@ -36,6 +30,7 @@ $effect(() => {
 
 export function updateCycle(updates: Partial<Cycle>) {
 	cycle = { ...cycle, ...updates };
+	save();
 }
 
 export function getCycle() {
@@ -52,16 +47,19 @@ export function addIngredient(ingredient: Omit<Ingredient, 'id'>) {
 		id: crypto.randomUUID()
 	};
 	ingredients = [...ingredients, newIngredient];
+	save();
 }
 
 export function updateIngredient(id: string, updates: Partial<Omit<Ingredient, 'id'>>) {
 	ingredients = ingredients.map((ingredient) =>
 		ingredient.id === id ? { ...ingredient, ...updates } : ingredient
 	);
+	save();
 }
 
 export function removeIngredient(id: string) {
 	ingredients = ingredients.filter((ingredient) => ingredient.id !== id);
+	save();
 }
 
 export function getIngredients() {
@@ -96,14 +94,17 @@ export function addMeal(meal: Omit<Meal, 'id'>) {
 		id: crypto.randomUUID()
 	};
 	meals = [...meals, newMeal];
+	save();
 }
 
 export function updateMeal(id: string, updates: Partial<Omit<Meal, 'id'>>) {
 	meals = meals.map((meal) => (meal.id === id ? { ...meal, ...updates } : meal));
+	save();
 }
 
 export function removeMeal(id: string) {
 	meals = meals.filter((meal) => meal.id !== id);
+	save();
 }
 
 export function getMeals() {
@@ -132,14 +133,17 @@ export function addMealPlan(mealPlan: Omit<MealPlan, 'id'>) {
 		id: crypto.randomUUID()
 	};
 	mealPlans = [...mealPlans, newMealPlan];
+	save();
 }
 
 export function updateMealPlan(id: string, updates: Partial<Omit<MealPlan, 'id'>>) {
 	mealPlans = mealPlans.map((plan) => (plan.id === id ? { ...plan, ...updates } : plan));
+	save();
 }
 
 export function removeMealPlan(id: string) {
 	mealPlans = mealPlans.filter((plan) => plan.id !== id);
+	save();
 }
 
 export function getMealPlans(activeOnly: boolean = true) {
