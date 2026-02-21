@@ -15,7 +15,6 @@
 	<a href="/meals" class:active={page.url.pathname.startsWith('/meals')}>Meals</a>
 	<a href="/plan" class:active={page.url.pathname.startsWith('/plan')}>Plan</a>
 	<a href="/grocery" class:active={page.url.pathname.startsWith('/grocery')}>Grocery</a>
-	<a href="/settings" class:active={page.url.pathname.startsWith('/settings')}>Settings</a>
 	<p>Meal Cycles</p>
 </nav>
 

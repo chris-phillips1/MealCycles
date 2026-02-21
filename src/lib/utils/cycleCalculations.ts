@@ -72,7 +72,7 @@ function getPhaseFromDay(
 }
 
 // Calculate phase date range
-export function getPhaseDateRange(
+function getPhaseDateRange(
 	cycleStartDate: Date,
 	phaseDayOffset: number,
 	phaseDuration: number
@@ -87,24 +87,6 @@ export function getPhaseDateRange(
 		startDate: phaseStartDate.toISOString().split('T')[0],
 		endDate: phaseEndDate.toISOString().split('T')[0]
 	};
-}
-
-export function getPhaseDayOffset(
-	phase: CyclePhase,
-	phaseDurations: Cycle['phaseDurations']
-): number {
-	switch (phase) {
-		case Phase.MENSTRUAL:
-			return 0;
-		case Phase.FOLLICULAR:
-			return phaseDurations.menstrual;
-		case Phase.OVULATION:
-			return phaseDurations.menstrual + phaseDurations.follicular;
-		case Phase.LUTEAL:
-			return phaseDurations.menstrual + phaseDurations.follicular + phaseDurations.ovulation;
-		default:
-			return 0;
-	}
 }
 
 // Main function - composes the smaller functions
