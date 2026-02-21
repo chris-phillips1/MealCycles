@@ -91,10 +91,25 @@ function getPhaseDateRange(
 
 // Main function - composes the smaller functions
 export function getCurrentCycleInfo(cycle: Cycle, today: Date = new Date()): CurrentCycleInfo {
-	const startDate = new Date(cycle.startDate);
-	const currentDay = getCurrentCycleDay(startDate, today, cycle.cycleLength);
+	const originalStartDate = new Date(cycle.startDate);
+	const daysSinceStart = getDaysBetween(originalStartDate, today);
+
+	// Calculate which cycle iteration we're in (0 = first cycle, 1 = second, etc.)
+	const cycleIteration = Math.floor(daysSinceStart / cycle.cycleLength);
+
+	// Calculate the start date of the CURRENT cycle (not the original)
+	const currentCycleStartDate = new Date(originalStartDate);
+	currentCycleStartDate.setDate(originalStartDate.getDate() + cycleIteration * cycle.cycleLength);
+
+	const currentDay = getCurrentCycleDay(originalStartDate, today, cycle.cycleLength);
 	const phaseInfo = getPhaseFromDay(currentDay, cycle.phaseDurations);
-	const dateRange = getPhaseDateRange(startDate, phaseInfo.phaseDayOffset, phaseInfo.phaseDuration);
+
+	// Use the CURRENT cycle start date, not the original
+	const dateRange = getPhaseDateRange(
+		currentCycleStartDate,
+		phaseInfo.phaseDayOffset,
+		phaseInfo.phaseDuration
+	);
 
 	return {
 		currentPhase: phaseInfo.phase,
