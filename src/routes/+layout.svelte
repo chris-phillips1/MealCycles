@@ -16,7 +16,7 @@
 	<a href="/plan" class:active={page.url.pathname.startsWith('/plan')}>Plan</a>
 	<a href="/grocery" class:active={page.url.pathname.startsWith('/grocery')}>Grocery</a>
 	<a href="/settings" class:active={page.url.pathname.startsWith('/settings')}>Settings</a>
-	<a href="/" class="site-title" class:active={page.url.pathname === '/'}>Meal Cycles</a>
+	<p>Meal Cycles</p>
 </nav>
 
 <main>
@@ -42,7 +42,7 @@
 		color: #000;
 	}
 
-	.site-title {
+	nav :last-child {
 		text-transform: uppercase;
 		font-weight: bold;
 		margin: 0 0 0 auto;
