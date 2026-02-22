@@ -6,16 +6,17 @@
 		getMeals,
 		updateCycle
 	} from '$lib/stores/state.svelte';
+	import DataCard from '$lib/components/DataCard.svelte';
 
 	const cycle = $derived(getCycle());
 	const ingredients = $derived(getIngredients());
 	const meals = $derived(getMeals());
 	const mealPlans = $derived(getMealPlans());
 
-	let formData = {
+	let formData = $state({
 		startDate: getCycle().startDate,
 		cycleLength: getCycle().cycleLength
-	};
+	});
 
 	function onsubmit(event: Event) {
 		event.preventDefault();
@@ -25,27 +26,12 @@
 
 <h1>Data Models</h1>
 <div class="data-model">
-	<div class="data-model-item">
-		<h2>Cycle</h2>
-		<pre>{JSON.stringify(cycle, null, 2)}</pre>
-	</div>
+	<DataCard name="Cycle" jsonObject={cycle} />
+	<DataCard name="Ingredients" jsonObject={ingredients} />
+	<DataCard name="Meals" jsonObject={meals} />
+	<DataCard name="Meal Plans" jsonObject={mealPlans} />
 
 	<div class="data-model-item">
-		<h2>Ingredients</h2>
-		<pre>{JSON.stringify(ingredients, null, 2)}</pre>
-	</div>
-
-	<div class="data-model-item">
-		<h2>Meals</h2>
-		<pre>{JSON.stringify(meals, null, 2)}</pre>
-	</div>
-
-	<div class="data-model-item">
-		<h2>Meal Plans</h2>
-		<pre>{JSON.stringify(mealPlans, null, 2)}</pre>
-	</div>
-
-	<div class="data-model-item edit">
 		<h2>Edit Cycle</h2>
 		<form {onsubmit}>
 			<div>
@@ -58,6 +44,15 @@
 			</div>
 			<input type="submit" />
 		</form>
+	</div>
+	<div class="data-model-item">
+		<h2>Add Ingredient</h2>
+	</div>
+	<div class="data-model-item">
+		<h2>Create Meal</h2>
+	</div>
+	<div class="data-model-item">
+		<h2>Create Meal Plan</h2>
 	</div>
 </div>
 
@@ -76,9 +71,6 @@
 		background-color: #f0f0f0;
 		padding: 1rem;
 		border-radius: 8px;
-	}
-
-	.data-model-item.edit form {
 		gap: 0.5rem;
 		align-items: flex-start;
 		justify-content: flex-start;
