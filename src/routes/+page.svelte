@@ -7,6 +7,11 @@
 		updateCycle
 	} from '$lib/stores/state.svelte';
 
+	const cycle = $derived(getCycle());
+	const ingredients = $derived(getIngredients());
+	const meals = $derived(getMeals());
+	const mealPlans = $derived(getMealPlans());
+
 	let formData = {
 		startDate: getCycle().startDate,
 		cycleLength: getCycle().cycleLength
@@ -22,7 +27,22 @@
 <div class="data-model">
 	<div class="data-model-item">
 		<h2>Cycle</h2>
-		<pre>{JSON.stringify(getCycle(), null, 2)}</pre>
+		<pre>{JSON.stringify(cycle, null, 2)}</pre>
+	</div>
+
+	<div class="data-model-item">
+		<h2>Ingredients</h2>
+		<pre>{JSON.stringify(ingredients, null, 2)}</pre>
+	</div>
+
+	<div class="data-model-item">
+		<h2>Meals</h2>
+		<pre>{JSON.stringify(meals, null, 2)}</pre>
+	</div>
+
+	<div class="data-model-item">
+		<h2>Meal Plans</h2>
+		<pre>{JSON.stringify(mealPlans, null, 2)}</pre>
 	</div>
 
 	<div class="data-model-item edit">
@@ -38,21 +58,6 @@
 			</div>
 			<input type="submit" />
 		</form>
-	</div>
-
-	<div class="data-model-item">
-		<h2>Ingredients</h2>
-		<pre>{JSON.stringify(getIngredients(), null, 2)}</pre>
-	</div>
-
-	<div class="data-model-item">
-		<h2>Meals</h2>
-		<pre>{JSON.stringify(getMeals(), null, 2)}</pre>
-	</div>
-
-	<div class="data-model-item">
-		<h2>Meal Plans</h2>
-		<pre>{JSON.stringify(getMealPlans(), null, 2)}</pre>
 	</div>
 </div>
 
