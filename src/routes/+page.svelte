@@ -24,7 +24,6 @@
 	}
 </script>
 
-<h1>Data Models</h1>
 <div class="data-model">
 	<DataCard name="Cycle" jsonObject={cycle} />
 	<DataCard name="Ingredients" jsonObject={ingredients} />
@@ -57,10 +56,6 @@
 </div>
 
 <style>
-	h2 {
-		margin-top: 0;
-	}
-
 	.data-model {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
