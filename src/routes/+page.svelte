@@ -63,7 +63,9 @@
 	}
 
 	.data-model-item {
-		background-color: #f0f0f0;
+		background-color: var(--bg-surface);
+		color: var(--text);
+		border: 1px solid var(--border);
 		padding: 1rem;
 		border-radius: 8px;
 		gap: 0.5rem;

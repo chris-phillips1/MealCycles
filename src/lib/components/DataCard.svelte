@@ -10,11 +10,18 @@
 <style>
 	h2 {
 		margin-top: 0;
+		color: var(--text);
 	}
 
 	section {
-		background-color: #f0f0f0;
+		background-color: var(--bg-surface);
+		color: var(--text);
+		border: 1px solid var(--border);
 		padding: 1rem;
 		border-radius: 8px;
+	}
+
+	pre {
+		color: var(--text-muted);
 	}
 </style>

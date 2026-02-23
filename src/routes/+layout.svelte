@@ -1,51 +1,123 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
-	import { getConfig } from '$lib/stores/state.svelte';
+	import { getConfig, updateConfig } from '$lib/stores/state.svelte';
 
 	let { children } = $props();
 
-	let config = $derived(getConfig());
+	const config = $derived(getConfig());
+
+	$effect(() => {
+		document.documentElement.setAttribute('data-theme', config.theme ?? 'dark');
+	});
+
+	function toggleTheme() {
+		updateConfig({ theme: config.theme === 'dark' ? 'light' : 'dark' });
+	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<nav class:dark={config.theme == 'dark'}>
+<nav>
 	<a href="/" class:active={page.url.pathname === '/'}>Home</a>
 	<a href="/ingredients" class:active={page.url.pathname.startsWith('/ingredients')}>Ingredients</a>
 	<a href="/meals" class:active={page.url.pathname.startsWith('/meals')}>Meals</a>
 	<a href="/plan" class:active={page.url.pathname.startsWith('/plan')}>Plan</a>
 	<a href="/grocery" class:active={page.url.pathname.startsWith('/grocery')}>Grocery</a>
 	<p>Meal Cycles</p>
+	<button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
+		{config.theme === 'dark' ? '☀️' : '🌙'}
+	</button>
 </nav>
 
-<main class:dark={config.theme == 'dark'}>
+<main>
 	{@render children()}
 </main>
 
 <style>
-	main {
-		background-color: green;
+	/* ── Theme tokens ─────────────────────────────────────── */
+	:global([data-theme='dark']) {
+		--bg: #0f0f0f;
+		--bg-surface: #1a1a1a;
+		--bg-surface-2: #242424;
+		--border: #2e2e2e;
+		--text: #e8e8e8;
+		--text-muted: #888;
+		--accent: #c084fc;
+		--accent-hover: #d8b4fe;
+		--nav-bg: #111;
+		--nav-border: #222;
 	}
 
-	nav.dark,
-	nav.dark > * {
-		background-color: #333;
-		color: #bbb;
+	:global([data-theme='light']) {
+		--bg: #f5f5f5;
+		--bg-surface: #ffffff;
+		--bg-surface-2: #ebebeb;
+		--border: #ddd;
+		--text: #111;
+		--text-muted: #666;
+		--accent: #7c3aed;
+		--accent-hover: #6d28d9;
+		--nav-bg: #ffffff;
+		--nav-border: #e0e0e0;
 	}
 
-	nav.dark > .active {
-		color: #fff;
-	}
-	main.dark {
-		background-color: #333;
+	/* ── Global base styles ───────────────────────────────── */
+	:global(html),
+	:global(body) {
+		background-color: var(--bg);
+		color: var(--text);
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
 	}
 
+	:global(button) {
+		background-color: var(--bg-surface-2);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		padding: 0.4rem 0.9rem;
+		cursor: pointer;
+		transition:
+			border-color 0.15s ease,
+			background-color 0.15s ease;
+	}
+
+	:global(button:hover) {
+		border-color: var(--accent);
+		background-color: var(--bg-surface);
+	}
+
+	:global(input),
+	:global(select),
+	:global(textarea) {
+		background-color: var(--bg-surface-2);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		padding: 0.4rem 0.7rem;
+		transition: border-color 0.15s ease;
+	}
+
+	:global(input:focus),
+	:global(select:focus),
+	:global(textarea:focus) {
+		outline: none;
+		border-color: var(--accent);
+	}
+
+	:global(input::placeholder) {
+		color: var(--text-muted);
+	}
+
+	/* ── Nav ──────────────────────────────────────────────── */
 	nav {
 		padding: 1rem;
-		border-bottom: 1px solid #ccc;
+		border-bottom: 1px solid var(--nav-border);
+		background-color: var(--nav-bg);
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -53,20 +125,42 @@
 
 	nav a {
 		text-decoration: none;
-		color: #333;
+		color: var(--text-muted);
+		transition: color 0.15s ease;
+	}
+
+	nav a:hover {
+		color: var(--text);
 	}
 
 	nav a.active {
 		font-weight: bold;
-		color: #000;
+		color: var(--accent);
 	}
 
-	nav :last-child {
+	nav :global(p) {
 		text-transform: uppercase;
 		font-weight: bold;
 		margin: 0 0 0 auto;
+		color: var(--text);
 	}
 
+	.theme-toggle {
+		background: none;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		padding: 0.25rem 0.5rem;
+		cursor: pointer;
+		font-size: 1rem;
+		line-height: 1;
+		transition: border-color 0.15s ease;
+	}
+
+	.theme-toggle:hover {
+		border-color: var(--accent);
+	}
+
+	/* ── Main ─────────────────────────────────────────────── */
 	main {
 		padding: 2rem;
 	}
