@@ -1,24 +1,5 @@
 <script lang="ts">
 	import { getIngredients } from '$lib/stores/state.svelte';
-	import { IngredientCategory } from '$lib/types';
-	import Select from 'svelte-select';
-
-	let phaseChoices = [
-		{ value: 'menstrual', label: 'Menstrual' },
-		{ value: 'follicular', label: 'Follicular' },
-		{ value: 'ovulation', label: 'Ovulation' },
-		{ value: 'luteal', label: 'Luteal' }
-	];
-
-	let categoryChoices = [
-		{ value: IngredientCategory.PROTEIN, label: IngredientCategory.PROTEIN },
-		{ value: IngredientCategory.DAIRY, label: IngredientCategory.DAIRY },
-		{ value: IngredientCategory.FRUIT, label: IngredientCategory.FRUIT },
-		{ value: IngredientCategory.VEGETABLE, label: IngredientCategory.VEGETABLE },
-		{ value: IngredientCategory.SPICE, label: IngredientCategory.SPICE },
-		{ value: IngredientCategory.GRAIN, label: IngredientCategory.GRAIN },
-		{ value: IngredientCategory.OTHER, label: IngredientCategory.OTHER }
-	];
 
 	let ingredients = $derived(getIngredients());
 </script>
@@ -41,11 +22,18 @@
 	</article>
 	<article>
 		<label for="categoryFilter">Category:</label>
-		<Select items={categoryChoices} multiple />
+		<select name="category" id="categoryFilter">
+			<option value="All">All</option>
+		</select>
 	</article>
 	<article>
 		<label for="phaseFilter">Phase:</label>
-		<Select items={phaseChoices} multiple />
+		<select name="phases" id="phaseFilter" multiple>
+			<option value="menstrual">Menstrual</option>
+			<option value="follicular">Follicular</option>
+			<option value="ovulation">Ovulation</option>
+			<option value="luteal">Luteal</option>
+		</select>
 	</article>
 	<article>
 		<button>Clear Filters</button>
