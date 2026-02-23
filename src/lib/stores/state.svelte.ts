@@ -19,9 +19,23 @@ let cycle = $state(initialData.cycle);
 let ingredients = $state(initialData.ingredients);
 let meals = $state(initialData.meals);
 let mealPlans = $state(initialData.mealPlans);
+let config = $state(initialData.config);
 
 function save() {
 	saveAppData({ cycle, ingredients, meals, mealPlans });
+}
+
+// ============================================
+// CONFIG FUNCTIONS
+// ============================================
+
+export function updateConfig(updates: Partial<typeof config>) {
+	config = { ...config, ...updates };
+	save();
+}
+
+export function getConfig() {
+	return config;
 }
 
 // ============================================

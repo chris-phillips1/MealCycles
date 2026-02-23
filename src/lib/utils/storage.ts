@@ -17,7 +17,10 @@ function getDefaultAppData(): AppData {
 		},
 		ingredients: [],
 		meals: [],
-		mealPlans: []
+		mealPlans: [],
+		config: {
+			theme: 'dark'
+		}
 	};
 }
 
@@ -29,6 +32,7 @@ function isValidAppData(data: object): data is AppData {
 		'ingredients' in data &&
 		'meals' in data &&
 		'mealPlans' in data &&
+		'config' in data &&
 		Array.isArray(data.ingredients) &&
 		Array.isArray(data.meals) &&
 		Array.isArray(data.mealPlans)
