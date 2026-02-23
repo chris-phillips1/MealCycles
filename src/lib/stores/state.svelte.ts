@@ -22,7 +22,7 @@ let mealPlans = $state(initialData.mealPlans);
 let config = $state(initialData.config);
 
 function save() {
-	saveAppData({ cycle, ingredients, meals, mealPlans });
+	saveAppData({ cycle, ingredients, meals, mealPlans, config });
 }
 
 // ============================================

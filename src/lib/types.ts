@@ -108,7 +108,7 @@ export interface AppData {
 	ingredients: Ingredient[];
 	meals: Meal[];
 	mealPlans: MealPlan[];
-	config?: {
-		theme?: 'dark' | 'light';
+	config: {
+		theme: 'dark' | 'light';
 	};
 }
