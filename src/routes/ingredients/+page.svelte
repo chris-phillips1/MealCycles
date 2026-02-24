@@ -18,9 +18,6 @@
 
 <section class="filters">
 	<article>
-		<input type="text" placeholder="Search for an ingredient" />
-	</article>
-	<article>
 		<label for="categoryFilter">Category:</label>
 		<select name="category" id="categoryFilter">
 			<option value="All">All</option>
@@ -40,61 +37,96 @@
 	</article>
 </section>
 
-<section>
+<section class="table-header">
 	<p>Showing x / {ingredients.length} ingredients</p>
+	<input type="text" placeholder="Search for an ingredient" />
 </section>
 
-<section>
+<section class="table-container">
 	{#if ingredients.length === 0}
 		<p>No ingredients yet. Add your first ingredient!</p>
-	{/if}
-
-	<table>
-		<thead>
-			<tr>
-				<th scope="col">Name</th>
-				<th scope="col">Category</th>
-				<th scope="col">Unit</th>
-				<th scope="col">Phases</th>
-				<th scope="col">Notes</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each ingredients as ingredient, id (id)}
+	{:else}
+		<table>
+			<thead>
 				<tr>
-					<td>{ingredient.name}</td>
-					<td>{ingredient.category}</td>
-					<td>{ingredient.unit}</td>
-					<td>
-						<ul>
-							{#each ingredient.beneficialPhases as phase, id (id)}
-								<li class={phase}>
-									{phase}
-								</li>
-							{/each}
-						</ul>
-					</td>
-					<td>{ingredient.notes}</td>
+					<th scope="col">Name</th>
+					<th scope="col">Category</th>
+					<th scope="col">Unit</th>
+					<th scope="col">Phases</th>
+					<th scope="col">Notes</th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{#each ingredients as ingredient, id (id)}
+					<tr>
+						<td>{ingredient.name}</td>
+						<td>{ingredient.category}</td>
+						<td>{ingredient.unit}</td>
+						<td>
+							{#each ingredient.beneficialPhases as phase, id (id)}
+								<p>{phase}</p>
+							{/each}
+						</td>
+						<td>{ingredient.notes}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	{/if}
 </section>
 
 <style>
-	.menstrual {
-		color: red;
+	header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 1rem;
 	}
 
-	.follicular {
-		color: blue;
+	header h1,
+	header p {
+		margin: 0;
 	}
 
-	.ovulation {
-		color: green;
+	header > section:last-child {
+		align-self: center;
 	}
 
-	.luteal {
-		color: yellow;
+	header > section:last-child button {
+		max-height: 100%;
+		padding: 0.75rem;
+	}
+
+	.filters {
+		display: flex;
+	}
+
+	.table-header {
+		display: flex;
+		margin-bottom: 1rem;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.table-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.table-container table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.table-container table th,
+	.table-container table td {
+		padding: 0.5rem;
+		border: 1px solid var(--border-color);
+	}
+
+	.table-container table th {
+		background-color: var(--background-color);
+		text-align: left;
 	}
 </style>

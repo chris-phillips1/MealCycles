@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import type { AppData } from '$lib/types';
+import { ingredients } from './sampleData';
 
 const STORAGE_KEY = 'MealCycles';
 
@@ -15,7 +16,7 @@ function getDefaultAppData(): AppData {
 				luteal: 13
 			}
 		},
-		ingredients: [],
+		ingredients: ingredients,
 		meals: [],
 		mealPlans: [],
 		config: {
