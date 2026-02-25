@@ -1,7 +1,17 @@
 <script lang="ts">
 	import { getIngredients } from '$lib/stores/state.svelte';
+	import { CyclePhase, IngredientCategory, Unit } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
+	let dialog;
+
+	function openDialog() {
+		dialog.showModal();
+	}
+
+	function closeDialog() {
+		dialog.close();
+	}
 </script>
 
 <header>
@@ -11,10 +21,48 @@
 			Manage your ingredients here. Add, edit, and organize ingredients by category and cycle phase.
 		</p>
 	</section>
-	<section>
-		<button>Add Ingredient</button>
+	<section class="add-ingredient">
+		<button onclick={openDialog}>Add Ingredient</button>
 	</section>
 </header>
+
+<section class="add-ingredient-container">
+	<dialog bind:this={dialog} onclose={closeDialog}>
+		<form method="dialog">
+			<label for="ingredient-name">Name:</label>
+			<input type="text" id="ingredient-name" name="ingredient-name" required />
+
+			<label for="ingredient-category">Category:</label>
+			<select name="ingredient-category" id="ingredient-category">
+				{#each Object.values(IngredientCategory) as category (category)}
+					<option value={category}>{category}</option>
+				{/each}
+			</select>
+
+			<label for="ingredient-unit">Unit:</label>
+			<select name="ingredient-unit" id="ingredient-unit">
+				{#each Object.values(Unit) as unit (unit)}
+					<option value={unit}>{unit}</option>
+				{/each}
+			</select>
+
+			<label for="ingredient-phases">Beneficial Phases:</label>
+			<select name="ingredient-phases" id="ingredient-phases">
+				{#each Object.values(CyclePhase) as phase (phase)}
+					<option value={phase}>{phase}</option>
+				{/each}
+			</select>
+
+			<label for="ingredient-notes">Notes:</label>
+			<textarea name="ingredient-notes" id="ingredient-notes"></textarea>
+
+			<div class="ingredient-form-buttons">
+				<input type="button" value="Cancel" onclick={closeDialog} />
+				<input type="submit" />
+			</div>
+		</form>
+	</dialog>
+</section>
 
 <section class="filters">
 	<article>
@@ -87,13 +135,32 @@
 		margin: 0;
 	}
 
-	header > section:last-child {
+	.add-ingredient {
 		align-self: center;
 	}
 
-	header > section:last-child button {
+	.add-ingredient button {
 		max-height: 100%;
 		padding: 0.75rem;
+	}
+
+	.add-ingredient-container dialog {
+		background-color: var(--bg);
+		color: var(--text);
+		width: 35%;
+		padding: 1.5rem;
+	}
+
+	.add-ingredient-container form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.ingredient-form-buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.75rem;
 	}
 
 	.filters {
@@ -102,7 +169,6 @@
 
 	.table-header {
 		display: flex;
-		margin-bottom: 1rem;
 		align-items: center;
 		justify-content: space-between;
 	}
@@ -112,6 +178,8 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		border: 4px solid var(--border);
+		border-radius: 0.25rem;
 	}
 
 	.table-container table {
