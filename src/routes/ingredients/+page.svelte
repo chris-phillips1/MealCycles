@@ -3,7 +3,14 @@
 	import { CyclePhase, IngredientCategory, Unit } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
-	let dialog;
+	let dialog: HTMLDialogElement;
+
+	function addIngredient(event: Event) {
+		event.preventDefault();
+		const formData = new FormData(event.target as HTMLFormElement);
+		const data = Object.fromEntries(formData.entries());
+		console.log(data);
+	}
 
 	function openDialog() {
 		dialog.showModal();
@@ -28,33 +35,33 @@
 
 <section class="add-ingredient-container">
 	<dialog bind:this={dialog} onclose={closeDialog}>
-		<form method="dialog">
+		<form method="dialog" onsubmit={addIngredient}>
 			<label for="ingredient-name">Name:</label>
-			<input type="text" id="ingredient-name" name="ingredient-name" required />
+			<input type="text" name="name" id="ingredient-name" required />
 
 			<label for="ingredient-category">Category:</label>
-			<select name="ingredient-category" id="ingredient-category">
+			<select name="category" id="ingredient-category">
 				{#each Object.values(IngredientCategory) as category (category)}
 					<option value={category}>{category}</option>
 				{/each}
 			</select>
 
 			<label for="ingredient-unit">Unit:</label>
-			<select name="ingredient-unit" id="ingredient-unit">
+			<select name="unit" id="ingredient-unit">
 				{#each Object.values(Unit) as unit (unit)}
 					<option value={unit}>{unit}</option>
 				{/each}
 			</select>
 
 			<label for="ingredient-phases">Beneficial Phases:</label>
-			<select name="ingredient-phases" id="ingredient-phases">
+			<select name="beneficialPhases" id="ingredient-phases">
 				{#each Object.values(CyclePhase) as phase (phase)}
 					<option value={phase}>{phase}</option>
 				{/each}
 			</select>
 
 			<label for="ingredient-notes">Notes:</label>
-			<textarea name="ingredient-notes" id="ingredient-notes"></textarea>
+			<textarea name="notes" id="ingredient-notes"></textarea>
 
 			<div class="ingredient-form-buttons">
 				<input type="button" value="Cancel" onclick={closeDialog} />
