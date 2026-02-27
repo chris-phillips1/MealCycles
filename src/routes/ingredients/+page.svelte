@@ -112,17 +112,21 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each ingredients as ingredient, id (id)}
+				{#each ingredients as ingredient (ingredient.id)}
 					<tr>
 						<td>{ingredient.name}</td>
 						<td>{ingredient.category}</td>
 						<td>{ingredient.unit}</td>
 						<td>
-							{#each ingredient.beneficialPhases as phase, id (id)}
-								<p>{phase}</p>
+							{#each ingredient.beneficialPhases as phase (phase)}
+								<span class="phase-badge {phase}">{phase}</span>
 							{/each}
 						</td>
 						<td>{ingredient.notes}</td>
+						<td>
+							<button>Edit</button>
+							<button>Delete</button>
+						</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -203,5 +207,30 @@
 	.table-container table th {
 		background-color: var(--background-color);
 		text-align: left;
+	}
+
+	.phase-badge {
+		display: inline-block;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		margin-right: 0.25rem;
+	}
+
+	.phase-badge.menstrual {
+		background: #ffebee;
+		color: #c62828;
+	}
+	.phase-badge.follicular {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+	.phase-badge.ovulation {
+		background: #e3f2fd;
+		color: #1565c0;
+	}
+	.phase-badge.luteal {
+		background: #fff3e0;
+		color: #e65100;
 	}
 </style>
