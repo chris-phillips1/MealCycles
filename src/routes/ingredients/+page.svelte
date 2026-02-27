@@ -170,6 +170,12 @@
 		gap: 0.75rem;
 	}
 
+	fieldset {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
 	.ingredient-form-buttons {
 		display: flex;
 		justify-content: flex-end;
@@ -178,6 +184,13 @@
 
 	.filters {
 		display: flex;
+		gap: 1rem;
+	}
+
+	.filter {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 
 	.table-header {
