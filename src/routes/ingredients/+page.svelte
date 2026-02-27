@@ -72,19 +72,20 @@
 </section>
 
 <section class="filters">
-	<article>
+	<article class="filter">
 		<label for="categoryFilter">Category:</label>
-		<select name="category" id="categoryFilter">
-			<option value="All">All</option>
+		<select name="category" id="categoryFilter" multiple bind:value={filters.categories}>
+			{#each Object.values(IngredientCategory) as category (category)}
+				<option value={category}>{category}</option>
+			{/each}
 		</select>
 	</article>
-	<article>
+	<article class="filter">
 		<label for="phaseFilter">Phase:</label>
-		<select name="phases" id="phaseFilter" multiple>
-			<option value="menstrual">Menstrual</option>
-			<option value="follicular">Follicular</option>
-			<option value="ovulation">Ovulation</option>
-			<option value="luteal">Luteal</option>
+		<select name="phases" id="phaseFilter" multiple bind:value={filters.phases}>
+			{#each Object.values(CyclePhase) as phase (phase)}
+				<option value={phase}>{phase}</option>
+			{/each}
 		</select>
 	</article>
 	<article>
@@ -109,6 +110,7 @@
 					<th scope="col">Unit</th>
 					<th scope="col">Phases</th>
 					<th scope="col">Notes</th>
+					<th scope="col">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
