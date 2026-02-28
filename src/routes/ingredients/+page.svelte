@@ -1,18 +1,53 @@
 <script lang="ts">
-	import { getIngredients } from '$lib/stores/state.svelte';
-	import { CyclePhase, IngredientCategory, Unit } from '$lib/types';
+	import { addIngredient, getIngredients } from '$lib/stores/state.svelte';
+	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
+
+	const filters = $state({
+		categories: [],
+		phases: []
+	});
+
+	const ingredientFields = $state({
+		name: '',
+		category: '',
+		unit: '',
+		beneficialPhases: [],
+		notes: ''
+	});
 
 	let ingredients = $derived(getIngredients());
 	let dialog: HTMLDialogElement;
 
-	function addIngredient(event: Event) {
+	function onsubmit(event: Event) {
 		event.preventDefault();
-		const formData = new FormData(event.target as HTMLFormElement);
-		const data = Object.fromEntries(formData.entries());
-		console.log(data);
+
+		const form = event.target as HTMLFormElement;
+		const formData = new FormData(form);
+		const ingredientData = {
+			name: formData.get('name') as string,
+			category: formData.get('category') as IngredientCategory,
+			unit: formData.get('unit') as Unit,
+			beneficialPhases: formData.getAll('beneficialPhases') as CyclePhase[],
+			notes: formData.get('notes') as string
+		};
+
+		if (ingredientData.beneficialPhases.length === 0) {
+			alert('Please select at least one beneficial phase');
+			return;
+		}
+
+		addIngredient(ingredientData);
+
+		form.reset();
+		dialog.close();
 	}
 
-	function openDialog() {
+	function openDialog(ingredient: Ingredient) {
+		ingredientFields.name = ingredient.name;
+		ingredientFields.category = ingredient.category;
+		ingredientFields.unit = ingredient.unit;
+		ingredientFields.beneficialPhases = ingredient.beneficialPhases;
+		ingredientFields.notes= ingredient.notes;
 		dialog.showModal();
 	}
 
