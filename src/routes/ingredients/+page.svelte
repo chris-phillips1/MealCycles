@@ -35,33 +35,47 @@
 
 <section class="add-ingredient-container">
 	<dialog bind:this={dialog} onclose={closeDialog}>
-		<form method="dialog" onsubmit={addIngredient}>
+		<form method="dialog" {onsubmit}>
 			<label for="ingredient-name">Name:</label>
-			<input type="text" name="name" id="ingredient-name" required />
+			<input
+				type="text"
+				name="name"
+				id="ingredient-name"
+				bind:value={ingredientFields.name}
+				required
+			/>
 
 			<label for="ingredient-category">Category:</label>
-			<select name="category" id="ingredient-category">
+			<select name="category" id="ingredient-category" bind:value={ingredientFields.category}>
 				{#each Object.values(IngredientCategory) as category (category)}
 					<option value={category}>{category}</option>
 				{/each}
 			</select>
 
 			<label for="ingredient-unit">Unit:</label>
-			<select name="unit" id="ingredient-unit">
+			<select name="unit" id="ingredient-unit" bind:value={ingredientFields.unit}>
 				{#each Object.values(Unit) as unit (unit)}
 					<option value={unit}>{unit}</option>
 				{/each}
 			</select>
 
-			<label for="ingredient-phases">Beneficial Phases:</label>
-			<select name="beneficialPhases" id="ingredient-phases">
+			<fieldset>
+				<legend>Beneficial Phases: (select at least one)</legend>
 				{#each Object.values(CyclePhase) as phase (phase)}
-					<option value={phase}>{phase}</option>
+					<label>
+						<input
+							type="checkbox"
+							name="beneficialPhases"
+							value={phase}
+							bind:group={ingredientFields.beneficialPhases}
+						/>
+						{phase}
+					</label>
 				{/each}
-			</select>
+			</fieldset>
 
 			<label for="ingredient-notes">Notes:</label>
-			<textarea name="notes" id="ingredient-notes"></textarea>
+			<textarea name="notes" id="ingredient-notes" bind:value={ingredientFields.notes}></textarea>
 
 			<div class="ingredient-form-buttons">
 				<input type="button" value="Cancel" onclick={closeDialog} />
