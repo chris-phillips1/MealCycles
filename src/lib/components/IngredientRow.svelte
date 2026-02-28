@@ -5,7 +5,7 @@
 		headers
 	}: {
 		ingredient: Ingredient;
-		headers: Array<{ name: string; propertyName: string; actions: string[] }>;
+		headers: Array<{ headerTitle: string; propertyName: string; actions?: string[] }>;
 	} = $props();
 </script>
 
