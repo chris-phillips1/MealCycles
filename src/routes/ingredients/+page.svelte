@@ -1,21 +1,116 @@
 <script lang="ts">
-	import { getIngredients } from '$lib/stores/state.svelte';
-	import { CyclePhase, IngredientCategory } from '$lib/types';
+	import { addIngredient, getIngredients } from '$lib/stores/state.svelte';
+	import { CyclePhase, IngredientCategory, Unit } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
+
+	// Dialog variables
+	let addIngredientDialog: HTMLDialogElement;
+
+	// Form variables
+	let formData = $state({
+		name: '',
+		category: null,
+		unit: null,
+		beneficialPhases: [] as CyclePhase[],
+		notes: ''
+	});
+
+	function validateForm(data: typeof formData) {
+		const errors: Record<string, string> = {};
+
+		if (!data.name.trim()) {
+			errors.name = 'Name is required';
+		}
+
+		if (!data.category) {
+			errors.category = 'Category is required';
+		}
+
+		if (!data.unit) {
+			errors.unit = 'Unit is required';
+		}
+
+		if (data.beneficialPhases.length === 0) {
+			errors.beneficialPhases = 'Select at least one phase';
+		}
+
+		return Object.keys(errors).length > 0 ? errors : null;
+	}
+
+	function openAddIngredientDialog() {
+		addIngredientDialog.showModal();
+	}
+
+	function closeAddIngredientDialog() {
+		addIngredientDialog.close();
+	}
+
+	function handleAddIngredient() {
+		openAddIngredientDialog();
+	}
+
+	function handleAddIngredientClose() {
+		console.log('Dialog closed');
+	}
+
+	function handleAddIngredientSubmit() {
+		closeAddIngredientDialog();
+
+		const validationErrors = validateForm(formData);
+		if (validationErrors) {
+			return;
+		}
+
+		addIngredient({
+			name: formData.name,
+			category: formData.category!,
+			unit: formData.unit!,
+			beneficialPhases: formData.beneficialPhases,
+			notes: formData.notes
+		});
+	}
 </script>
 
 <header>
-	<section>
-		<h1>Ingredients</h1>
-		<p>
-			Manage your ingredients here. Add, edit, and organize ingredients by category and cycle phase.
-		</p>
-	</section>
-	<section class="add-ingredient">
-		<button>Add Ingredient</button>
-	</section>
+	<h1>Ingredients</h1>
+	<nav>
+		<button onclick={handleAddIngredient}>Add Ingredient</button>
+	</nav>
 </header>
+
+<pre>{JSON.stringify(formData, null, 2)}</pre>
+
+<dialog
+	bind:this={addIngredientDialog}
+	onclose={handleAddIngredientClose}
+	onsubmit={handleAddIngredientSubmit}
+>
+	<form>
+		<input type="text" name="name" placeholder="Name" bind:value={formData.name} />
+		<select name="category" bind:value={formData.category}>
+			{#each Object.values(IngredientCategory) as category (category)}
+				<option value={category}>{category}</option>
+			{/each}
+		</select>
+
+		<select name="unit" bind:value={formData.unit}>
+			{#each Object.values(Unit) as unit (unit)}
+				<option value={unit}>{unit}</option>
+			{/each}
+		</select>
+
+		{#each Object.values(CyclePhase) as phase (phase)}
+			<label class="capitalize">
+				<input type="checkbox" value={phase} bind:group={formData.beneficialPhases} />
+				{phase}
+			</label>
+		{/each}
+		<textarea name="notes" placeholder="Notes" bind:value={formData.notes}></textarea>
+		<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
+		<input type="submit" value="Add Ingredient" />
+	</form>
+</dialog>
 
 <section class="filters">
 	<article class="filter">
@@ -68,7 +163,7 @@
 				</tr>
 			{:else}
 				<tr>
-					<td colspan="3">No ingredients yet!</td>
+					<td colspan="5">No ingredients yet!</td>
 				</tr>
 			{/each}
 		</tbody>
@@ -79,21 +174,23 @@
 	header {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 1rem;
 	}
 
-	header h1,
-	header p {
+	header h1 {
 		margin: 0;
 	}
 
-	.add-ingredient {
+	header nav {
 		align-self: center;
 	}
 
-	.add-ingredient button {
+	header nav button {
 		max-height: 100%;
-		padding: 0.75rem;
+		padding: 0.5rem;
+	}
+
+	.capitalize {
+		text-transform: capitalize;
 	}
 
 	.filters {
