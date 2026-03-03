@@ -1,37 +1,8 @@
 <script lang="ts">
-	import IngredientRow from '$lib/components/IngredientRow.svelte';
-	import TableHeader from '$lib/components/TableHeader.svelte';
 	import { getIngredients } from '$lib/stores/state.svelte';
 	import { CyclePhase, IngredientCategory } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
-	let headers = [
-		{
-			headerTitle: 'Name',
-			propertyName: 'name'
-		},
-		{
-			headerTitle: 'Category',
-			propertyName: 'category'
-		},
-		{
-			headerTitle: 'Unit',
-			propertyName: 'unit'
-		},
-		{
-			headerTitle: 'Phases',
-			propertyName: 'beneficialPhases'
-		},
-		{
-			headerTitle: 'Notes',
-			propertyName: 'notes'
-		},
-		{
-			headerTitle: 'Actions',
-			propertyName: 'actions',
-			actions: ['Edit', 'Delete']
-		}
-	];
 </script>
 
 <header>
@@ -69,18 +40,39 @@
 </section>
 
 <section class="table">
-	{#if ingredients.length === 0}
-		<p>No ingredients yet. Add your first ingredient!</p>
-	{:else}
-		<table>
-			<TableHeader {headers} />
-			<tbody>
-				{#each ingredients as ingredient (ingredient.id)}
-					<IngredientRow {ingredient} {headers} />
-				{/each}
-			</tbody>
-		</table>
-	{/if}
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">Name</th>
+				<th scope="col">Category</th>
+				<th scope="col">Phases</th>
+				<th scope="col">Notes</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each ingredients as ingredient (ingredient.id)}
+				<tr>
+					<td>{ingredient.name}</td>
+					<td>{ingredient.category}</td>
+					<td>
+						{#each ingredient.beneficialPhases as phase (phase)}
+							<span class="badge {phase}">{phase}</span>
+						{/each}
+					</td>
+					<td>{ingredient.notes}</td>
+					<td>
+						<button>Edit</button>
+						<button>Delete</button>
+					</td>
+				</tr>
+			{:else}
+				<tr>
+					<td colspan="3">No ingredients yet!</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 </section>
 
 <style>
@@ -121,18 +113,61 @@
 		background: var(--bg-surface-2);
 	}
 
-	.table {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		border: 4px solid var(--border);
-		border-radius: 0.25rem;
+	table {
+		width: 100%;
+		border-collapse: collapse;
 		margin-top: 1rem;
 	}
 
-	.table table {
-		width: 100%;
-		border-collapse: collapse;
+	th,
+	td {
+		padding: 0.75rem;
+		text-align: left;
+		border-bottom: 1px solid var(--border);
+	}
+
+	th {
+		background: var(--bg-surface-2);
+		font-weight: 600;
+	}
+
+	thead th {
+		position: sticky;
+		top: 0;
+		background: var(--bg-surface-2);
+		z-index: 10;
+	}
+
+	.badge {
+		display: inline-block;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		margin-right: 0.25rem;
+		font-weight: 500;
+	}
+
+	.menstrual {
+		background: #fecaca;
+		color: #991b1b;
+	}
+
+	.follicular {
+		background: #d9f99d;
+		color: #3f6212;
+	}
+
+	.ovulation {
+		background: #bfdbfe;
+		color: #1e40af;
+	}
+
+	.luteal {
+		background: #fed7aa;
+		color: #9a3412;
+	}
+
+	tr:hover {
+		background: var(--bg-surface); /* Helpful for scanning rows */
 	}
 </style>
