@@ -48,32 +48,27 @@
 
 <section class="filters">
 	<article class="filter">
-		<label for="categoryFilter">Category:</label>
-		<select name="category" id="categoryFilter" multiple>
+		<p>Category:</p>
+		<div class="filter-choices">
 			{#each Object.values(IngredientCategory) as category (category)}
-				<option value={category}>{category}</option>
+				<button>{category}</button>
 			{/each}
-		</select>
+		</div>
 	</article>
 	<article class="filter">
-		<label for="phaseFilter">Phase:</label>
-		<select name="phases" id="phaseFilter" multiple>
+		<p>Phase:</p>
+		<div class="filter-choices">
 			{#each Object.values(CyclePhase) as phase (phase)}
-				<option value={phase}>{phase}</option>
+				<button>{phase}</button>
 			{/each}
-		</select>
+		</div>
 	</article>
 	<article>
 		<button>Clear Filters</button>
 	</article>
 </section>
 
-<section class="table-header">
-	<p>Showing x / {ingredients.length} ingredients</p>
-	<input type="text" placeholder="Search for an ingredient" />
-</section>
-
-<section class="table-container">
+<section class="table">
 	{#if ingredients.length === 0}
 		<p>No ingredients yet. Add your first ingredient!</p>
 	{:else}
@@ -109,76 +104,35 @@
 		padding: 0.75rem;
 	}
 
-	.ingredient-form-buttons {
-		display: flex;
-		justify-content: flex-end;
-		gap: 0.75rem;
-	}
-
 	.filters {
 		display: flex;
 		gap: 1rem;
 	}
 
-	.filter {
+	.filter-choices {
 		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		max-width: 30vw;
 	}
 
-	.table-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+	.filter-choices button {
+		min-width: 100px;
+		background: var(--bg-surface-2);
 	}
 
-	.table-container {
+	.table {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		border: 4px solid var(--border);
 		border-radius: 0.25rem;
+		margin-top: 1rem;
 	}
 
-	.table-container table {
+	.table table {
 		width: 100%;
 		border-collapse: collapse;
-	}
-
-	.table-container table th,
-	.table-container table td {
-		padding: 0.5rem;
-		border: 1px solid var(--border-color);
-	}
-
-	.table-container table th {
-		background-color: var(--background-color);
-		text-align: left;
-	}
-
-	.phase-badge {
-		display: inline-block;
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.85rem;
-		margin-right: 0.25rem;
-	}
-
-	.phase-badge.menstrual {
-		background: #ffebee;
-		color: #c62828;
-	}
-	.phase-badge.follicular {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-	.phase-badge.ovulation {
-		background: #e3f2fd;
-		color: #1565c0;
-	}
-	.phase-badge.luteal {
-		background: #fff3e0;
-		color: #e65100;
 	}
 </style>
