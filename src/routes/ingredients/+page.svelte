@@ -90,6 +90,15 @@
 	}
 
 	function handleAddIngredient() {
+		editingIngredient = null;
+		formData = {
+			name: '',
+			category: null,
+			unit: null,
+			beneficialPhases: [] as CyclePhase[],
+			notes: ''
+		};
+		validationErrors = {};
 		openAddIngredientDialog();
 	}
 
@@ -138,6 +147,7 @@
 		};
 
 		validationErrors = {};
+		editingIngredient = null;
 	}
 </script>
 
@@ -147,8 +157,6 @@
 		<button onclick={handleAddIngredient}>Add Ingredient</button>
 	</nav>
 </header>
-
-<pre>{JSON.stringify(formData, null, 2)}</pre>
 
 <dialog bind:this={addIngredientDialog} onclose={handleAddIngredientClose}>
 	<form onsubmit={handleAddIngredientSubmit}>
