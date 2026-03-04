@@ -53,6 +53,14 @@
 		notes: ''
 	});
 
+	function clearFilters() {
+		filters = {
+			search: '',
+			categories: [],
+			phases: []
+		};
+	}
+
 	function toggleCategory(category: IngredientCategory) {
 		if (filters.categories.includes(category)) {
 			filters.categories = filters.categories.filter((c) => c !== category);
@@ -302,7 +310,7 @@
 		</div>
 	</article>
 	<article class="filter-actions">
-		<button>Clear Filters</button>
+		<button onclick={clearFilters}>Clear Filters</button>
 		<input type="search" bind:value={filters.search} placeholder="Search ingredients..." />
 	</article>
 </section>
@@ -335,7 +343,7 @@
 					</td>
 				</tr>
 			{:else}
-				{#if filters.search.trim()}
+				{#if filters.search.trim() || filters.categories.length > 0 || filters.phases.length > 0}
 					<tr>
 						<td colspan="5">No ingredients found!</td>
 					</tr>
