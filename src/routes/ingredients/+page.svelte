@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import FormDialog from '$lib/components/FormDialog.svelte';
 	import {
 		addIngredient,
 		getIngredients,
@@ -33,8 +35,8 @@
 		return filtered;
 	});
 
-	let addIngredientDialog: HTMLDialogElement;
-	let confirmationDialog: HTMLDialogElement;
+	let ingredientFormDialog: FormDialog;
+	let confirmDialog: ConfirmDialog;
 
 	let filters = $state({
 		search: '',
@@ -87,8 +89,7 @@
 			notes: ingredient.notes ?? ''
 		};
 		validationErrors = {};
-
-		openAddIngredientDialog();
+		ingredientFormDialog?.show();
 	}
 
 	function validateForm(data: typeof formData) {
@@ -113,32 +114,16 @@
 		return Object.keys(errors).length > 0 ? errors : null;
 	}
 
-	function openConfirmationDialog() {
-		confirmationDialog?.showModal();
-	}
-
-	function closeConfirmationDialog() {
-		confirmationDialog?.close();
-	}
-
 	function handleDeleteIngredient(ingredient: Ingredient) {
 		deletingIngredient = ingredient;
-		openConfirmationDialog();
+		confirmDialog?.show();
 	}
 
 	function deleteIngredient() {
 		if (deletingIngredient?.id) {
 			removeIngredient(deletingIngredient!.id);
-			closeConfirmationDialog();
+			confirmDialog?.close();
 		}
-	}
-
-	function openAddIngredientDialog() {
-		addIngredientDialog?.showModal();
-	}
-
-	function closeAddIngredientDialog() {
-		addIngredientDialog?.close();
 	}
 
 	function handleAddIngredient() {
@@ -151,7 +136,7 @@
 			notes: ''
 		};
 		validationErrors = {};
-		openAddIngredientDialog();
+		ingredientFormDialog?.show();
 	}
 
 	function handleAddIngredientClose() {
@@ -185,7 +170,7 @@
 			});
 		}
 
-		closeAddIngredientDialog();
+		ingredientFormDialog?.close();
 		resetForm();
 	}
 
@@ -210,8 +195,11 @@
 	</nav>
 </header>
 
-<dialog bind:this={addIngredientDialog} onclose={handleAddIngredientClose}>
-	<h2>{editingIngredient ? 'Edit Ingredient' : 'Add Ingredient'}</h2>
+<FormDialog
+	bind:this={ingredientFormDialog}
+	title={editingIngredient ? 'Edit Ingredient' : 'Add Ingredient'}
+	onClose={handleAddIngredientClose}
+>
 	<form onsubmit={handleAddIngredientSubmit}>
 		<input
 			type="text"
@@ -276,20 +264,18 @@
 		<textarea name="notes" placeholder="Notes (optional)" rows="3" bind:value={formData.notes}>
 		</textarea>
 		<div class="form-buttons">
-			<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
+			<input type="button" value="Cancel" onclick={() => ingredientFormDialog?.close()} />
 			<input type="submit" value={editingIngredient ? 'Update Ingredient' : 'Add Ingredient'} />
 		</div>
 	</form>
-</dialog>
+</FormDialog>
 
-<dialog bind:this={confirmationDialog}>
-	<h2>Delete Ingredient</h2>
-	<p>Are you sure you want to delete this ingredient?</p>
-	<div class="form-buttons">
-		<input type="button" value="Cancel" onclick={closeConfirmationDialog} />
-		<input type="button" value="Delete" onclick={deleteIngredient} />
-	</div>
-</dialog>
+<ConfirmDialog
+	bind:this={confirmDialog}
+	message="Are you sure you want to delete this ingredient?"
+	onConfirm={deleteIngredient}
+	onCancel={() => confirmDialog?.close()}
+/>
 
 <section class="filters">
 	<article class="filter">
@@ -397,36 +383,10 @@
 		font-weight: 500;
 	}
 
-	/* Dialog */
-	dialog {
-		background: var(--bg-surface);
-		color: var(--text);
-		border: 1px solid var(--border);
-		border-radius: 12px;
-		padding: 2rem;
-		min-width: 400px;
-		max-width: 500px;
-		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-	}
-
-	dialog::backdrop {
-		background: rgba(0, 0, 0, 0.5);
-		backdrop-filter: blur(4px);
-	}
-
-	dialog h2 {
-		margin-top: 0;
-		margin-bottom: 1rem;
-	}
-
 	form {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-	}
-
-	.form-buttons {
-		align-self: flex-end;
 	}
 
 	textarea {
