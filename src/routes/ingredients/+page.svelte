@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { addIngredient, getIngredients, updateIngredient } from '$lib/stores/state.svelte';
+	import {
+		addIngredient,
+		getIngredients,
+		removeIngredient,
+		updateIngredient
+	} from '$lib/stores/state.svelte';
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
+	let deletingIngredient = $state<Ingredient | null>(null);
 
 	// Dialog variables
 	let addIngredientDialog: HTMLDialogElement;
+	let confirmationDialog: HTMLDialogElement;
 
 	// Form variables
 	let editingIngredient = $state<Ingredient | null>(null);
@@ -20,7 +27,6 @@
 
 	function handleEditIngredient(ingredient: Ingredient) {
 		editingIngredient = ingredient;
-		showForm = true;
 		formData = {
 			name: ingredient.name,
 			category: ingredient.category,
@@ -55,12 +61,32 @@
 		return Object.keys(errors).length > 0 ? errors : null;
 	}
 
+	function openConfirmationDialog() {
+		confirmationDialog?.showModal();
+	}
+
+	function closeConfirmationDialog() {
+		confirmationDialog?.close();
+	}
+
+	function handleDeleteIngredient(ingredient: Ingredient) {
+		deletingIngredient = ingredient;
+		openConfirmationDialog();
+	}
+
+	function deleteIngredient() {
+		if (deletingIngredient?.id) {
+			removeIngredient(deletingIngredient!.id);
+			closeConfirmationDialog();
+		}
+	}
+
 	function openAddIngredientDialog() {
-		addIngredientDialog.showModal();
+		addIngredientDialog?.showModal();
 	}
 
 	function closeAddIngredientDialog() {
-		addIngredientDialog.close();
+		addIngredientDialog?.close();
 	}
 
 	function handleAddIngredient() {
@@ -192,6 +218,12 @@
 	</form>
 </dialog>
 
+<dialog bind:this={confirmationDialog}>
+	<p>Are you sure you want to delete this ingredient?</p>
+	<input type="button" value="Cancel" onclick={closeConfirmationDialog} />
+	<input type="button" value="Delete" onclick={deleteIngredient} />
+</dialog>
+
 <section class="filters">
 	<article class="filter">
 		<p>Category:</p>
@@ -238,7 +270,7 @@
 					<td>{ingredient.notes}</td>
 					<td>
 						<button onclick={() => handleEditIngredient(ingredient)}>Edit</button>
-						<button>Delete</button>
+						<button onclick={() => handleDeleteIngredient(ingredient)}>Delete</button>
 					</td>
 				</tr>
 			{:else}
