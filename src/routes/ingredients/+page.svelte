@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addIngredient, getIngredients } from '$lib/stores/state.svelte';
-	import { CyclePhase, IngredientCategory, Unit } from '$lib/types';
+	import { addIngredient, getIngredients, updateIngredient } from '$lib/stores/state.svelte';
+	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
 
@@ -8,6 +8,7 @@
 	let addIngredientDialog: HTMLDialogElement;
 
 	// Form variables
+	let editingIngredient = $state<Ingredient | null>(null);
 	let validationErrors = $state<Record<string, string>>({});
 	let formData = $state({
 		name: '',
@@ -16,6 +17,21 @@
 		beneficialPhases: [] as CyclePhase[],
 		notes: ''
 	});
+
+	function handleEditIngredient(ingredient: Ingredient) {
+		editingIngredient = ingredient;
+		showForm = true;
+		formData = {
+			name: ingredient.name,
+			category: ingredient.category,
+			unit: ingredient.unit,
+			beneficialPhases: ingredient.beneficialPhases,
+			notes: ingredient.notes ?? ''
+		};
+		validationErrors = {};
+
+		openAddIngredientDialog();
+	}
 
 	function validateForm(data: typeof formData) {
 		const errors: Record<string, string> = {};
@@ -64,13 +80,23 @@
 			return;
 		}
 
-		addIngredient({
-			name: formData.name,
-			category: formData.category!,
-			unit: formData.unit!,
-			beneficialPhases: formData.beneficialPhases,
-			notes: formData.notes
-		});
+		if (editingIngredient) {
+			updateIngredient(editingIngredient.id, {
+				name: formData.name,
+				category: formData.category!,
+				unit: formData.unit!,
+				beneficialPhases: formData.beneficialPhases,
+				notes: formData.notes
+			});
+		} else {
+			addIngredient({
+				name: formData.name,
+				category: formData.category!,
+				unit: formData.unit!,
+				beneficialPhases: formData.beneficialPhases,
+				notes: formData.notes
+			});
+		}
 
 		closeAddIngredientDialog();
 		resetForm();
@@ -162,7 +188,7 @@
 		{/if}
 		<textarea name="notes" placeholder="Notes" bind:value={formData.notes}></textarea>
 		<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
-		<input type="submit" value="Add Ingredient" />
+		<input type="submit" value={editingIngredient ? 'Update Ingredient' : 'Add Ingredient'} />
 	</form>
 </dialog>
 
@@ -211,7 +237,7 @@
 					</td>
 					<td>{ingredient.notes}</td>
 					<td>
-						<button>Edit</button>
+						<button onclick={() => handleEditIngredient(ingredient)}>Edit</button>
 						<button>Delete</button>
 					</td>
 				</tr>
