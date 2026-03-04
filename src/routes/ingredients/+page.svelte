@@ -9,15 +9,39 @@
 
 	let ingredients = $derived(getIngredients());
 	let filteredIngredients: Ingredient[] = $derived.by(() => {
-		return ingredients.filter((ingredient) =>
-			ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-		);
+		let filtered = ingredients;
+
+		// Filter by search term
+		if (filters.search.trim()) {
+			filtered = filtered.filter((ingredient) =>
+				ingredient.name.toLowerCase().includes(filters.search.toLowerCase())
+			);
+		}
+
+		// Filter by category
+		if (filters.categories.length > 0) {
+			filtered = filtered.filter((ingredient) => filters.categories.includes(ingredient.category));
+		}
+
+		// Filter by phase
+		if (filters.phases.length > 0) {
+			filtered = filtered.filter((ingredient) =>
+				filters.phases.some((phase) => ingredient.beneficialPhases.includes(phase))
+			);
+		}
+
+		return filtered;
 	});
 
 	let addIngredientDialog: HTMLDialogElement;
 	let confirmationDialog: HTMLDialogElement;
 
-	let searchTerm = $state('');
+	let filters = $state({
+		search: '',
+		categories: [] as IngredientCategory[],
+		phases: [] as CyclePhase[]
+	});
+
 	let deletingIngredient = $state<Ingredient | null>(null);
 	let editingIngredient = $state<Ingredient | null>(null);
 	let validationErrors = $state<Record<string, string>>({});
@@ -28,6 +52,22 @@
 		beneficialPhases: [] as CyclePhase[],
 		notes: ''
 	});
+
+	function toggleCategory(category: IngredientCategory) {
+		if (filters.categories.includes(category)) {
+			filters.categories = filters.categories.filter((c) => c !== category);
+		} else {
+			filters.categories = [...filters.categories, category];
+		}
+	}
+
+	function togglePhase(phase: CyclePhase) {
+		if (filters.phases.includes(phase)) {
+			filters.phases = filters.phases.filter((p) => p !== phase);
+		} else {
+			filters.phases = [...filters.phases, phase];
+		}
+	}
 
 	function handleEditIngredient(ingredient: Ingredient) {
 		editingIngredient = ingredient;
@@ -240,24 +280,30 @@
 	<article class="filter">
 		<p>Category:</p>
 		<div class="filter-choices">
-			<button>All</button>
 			{#each Object.values(IngredientCategory) as category (category)}
-				<button class="capitalize">{category}</button>
+				<button
+					class:active={filters.categories.includes(category)}
+					class="capitalize"
+					onclick={() => toggleCategory(category)}>{category}</button
+				>
 			{/each}
 		</div>
 	</article>
 	<article class="filter">
 		<p>Phase:</p>
 		<div class="filter-choices">
-			<button>All</button>
 			{#each Object.values(CyclePhase) as phase (phase)}
-				<button class="capitalize">{phase}</button>
+				<button
+					class:active={filters.phases.includes(phase)}
+					class="capitalize"
+					onclick={() => togglePhase(phase)}>{phase}</button
+				>
 			{/each}
 		</div>
 	</article>
 	<article class="filter-actions">
 		<button>Clear Filters</button>
-		<input type="search" bind:value={searchTerm} placeholder="Search ingredients..." />
+		<input type="search" bind:value={filters.search} placeholder="Search ingredients..." />
 	</article>
 </section>
 
@@ -289,9 +335,15 @@
 					</td>
 				</tr>
 			{:else}
-				<tr>
-					<td colspan="5">No ingredients yet!</td>
-				</tr>
+				{#if filters.search.trim()}
+					<tr>
+						<td colspan="5">No ingredients found!</td>
+					</tr>
+				{:else}
+					<tr>
+						<td colspan="5">No ingredients yet!</td>
+					</tr>
+				{/if}
 			{/each}
 		</tbody>
 	</table>
@@ -341,6 +393,12 @@
 	.filter-choices button {
 		min-width: 50px;
 		background: var(--bg-surface-2);
+	}
+
+	.filter-choices button.active {
+		background: var(--accent);
+		color: white;
+		border-color: var(--accent);
 	}
 
 	.filter-actions {
