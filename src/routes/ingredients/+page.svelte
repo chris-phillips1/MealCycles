@@ -211,6 +211,7 @@
 </header>
 
 <dialog bind:this={addIngredientDialog} onclose={handleAddIngredientClose}>
+	<h2>{editingIngredient ? 'Edit Ingredient' : 'Add Ingredient'}</h2>
 	<form onsubmit={handleAddIngredientSubmit}>
 		<input
 			type="text"
@@ -272,16 +273,22 @@
 		{#if validationErrors.beneficialPhases}
 			<span class="error">{validationErrors.beneficialPhases}</span>
 		{/if}
-		<textarea name="notes" placeholder="Notes" bind:value={formData.notes}></textarea>
-		<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
-		<input type="submit" value={editingIngredient ? 'Update Ingredient' : 'Add Ingredient'} />
+		<textarea name="notes" placeholder="Notes (optional)" rows="3" bind:value={formData.notes}>
+		</textarea>
+		<div class="form-buttons">
+			<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
+			<input type="submit" value={editingIngredient ? 'Update Ingredient' : 'Add Ingredient'} />
+		</div>
 	</form>
 </dialog>
 
 <dialog bind:this={confirmationDialog}>
+	<h2>Delete Ingredient</h2>
 	<p>Are you sure you want to delete this ingredient?</p>
-	<input type="button" value="Cancel" onclick={closeConfirmationDialog} />
-	<input type="button" value="Delete" onclick={deleteIngredient} />
+	<div class="form-buttons">
+		<input type="button" value="Cancel" onclick={closeConfirmationDialog} />
+		<input type="button" value="Delete" onclick={deleteIngredient} />
+	</div>
 </dialog>
 
 <section class="filters">
@@ -338,18 +345,32 @@
 					</td>
 					<td>{ingredient.notes}</td>
 					<td>
-						<button onclick={() => handleEditIngredient(ingredient)}>Edit</button>
-						<button onclick={() => handleDeleteIngredient(ingredient)}>Delete</button>
+						<div class="action-buttons">
+							<button onclick={() => handleEditIngredient(ingredient)}>Edit</button>
+							<button class="danger" onclick={() => handleDeleteIngredient(ingredient)}
+								>Delete</button
+							>
+						</div>
 					</td>
 				</tr>
 			{:else}
 				{#if filters.search.trim() || filters.categories.length > 0 || filters.phases.length > 0}
 					<tr>
-						<td colspan="5">No ingredients found!</td>
+						<td colspan="5" class="empty-state">
+							<div class="empty-state-content">
+								<p class="empty-state-title">No ingredients found</p>
+								<p class="empty-state-subtitle">Try adjusting your filters</p>
+							</div>
+						</td>
 					</tr>
 				{:else}
 					<tr>
-						<td colspan="5">No ingredients yet!</td>
+						<td colspan="5" class="empty-state">
+							<div class="empty-state-content">
+								<p class="empty-state-title">No ingredients yet</p>
+								<p class="empty-state-subtitle">Click "Add Ingredient" to get started</p>
+							</div>
+						</td>
 					</tr>
 				{/if}
 			{/each}
@@ -358,37 +379,92 @@
 </section>
 
 <style>
+	/* Header */
 	header {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
 	}
 
 	header h1 {
 		margin: 0;
-	}
-
-	header nav {
-		align-self: center;
+		font-size: 2rem;
 	}
 
 	header nav button {
-		max-height: 100%;
-		padding: 0.5rem;
+		padding: 0.6rem 1.2rem;
+		font-weight: 500;
+	}
+
+	/* Dialog */
+	dialog {
+		background: var(--bg-surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 2rem;
+		min-width: 400px;
+		max-width: 500px;
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+	}
+
+	dialog::backdrop {
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+	}
+
+	dialog h2 {
+		margin-top: 0;
+		margin-bottom: 1rem;
 	}
 
 	form {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 1rem;
 	}
 
-	.capitalize {
-		text-transform: capitalize;
+	.form-buttons {
+		align-self: flex-end;
 	}
 
+	textarea {
+		resize: vertical;
+		min-height: 80px;
+		font-family: inherit;
+	}
+
+	.error {
+		color: #ef4444;
+		font-size: 0.85rem;
+		margin-top: -0.5rem;
+	}
+
+	/* Filters */
 	.filters {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 2rem;
+		padding: 1.5rem;
+		background: var(--bg-surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		margin-bottom: 1.5rem;
+	}
+
+	.filter {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.filter > p {
+		margin: 0;
+		font-weight: 600;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.filter-choices {
@@ -401,27 +477,39 @@
 	.filter-choices button {
 		min-width: 50px;
 		background: var(--bg-surface-2);
+		font-size: 0.9rem;
+		transition: all 0.2s ease;
+	}
+
+	.filter-choices button:hover:not(.active) {
+		background: var(--bg-surface);
+		transform: translateY(-1px);
 	}
 
 	.filter-choices button.active {
 		background: var(--accent);
 		color: white;
 		border-color: var(--accent);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 
 	.filter-actions {
-		align-self: flex-end;
-		flex: 1;
 		display: flex;
-		justify-content: flex-end;
+		align-items: flex-end;
 		gap: 1rem;
+		margin-left: auto;
+	}
+
+	.filter-actions button {
+		white-space: nowrap;
 	}
 
 	input[type='search'] {
-		justify-self: flex-end;
-		align-self: flex-end;
+		min-width: 200px;
+		padding: 0.5rem 1rem;
 	}
 
+	/* Table */
 	table {
 		width: 100%;
 		border-collapse: collapse;
@@ -447,6 +535,40 @@
 		z-index: 10;
 	}
 
+	tbody tr {
+		transition: background-color 0.15s ease;
+	}
+
+	tbody tr:hover {
+		background: var(--bg-surface);
+	}
+
+	td:nth-child(2) {
+		text-transform: capitalize;
+	}
+
+	/* Action buttons */
+	.action-buttons {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.action-buttons button {
+		padding: 0.35rem 0.75rem;
+		font-size: 0.85rem;
+	}
+
+	button.danger {
+		color: #ef4444;
+		border-color: #ef4444;
+	}
+
+	button.danger:hover {
+		background: #ef4444;
+		color: white;
+	}
+
+	/* Badges */
 	.badge {
 		display: inline-block;
 		padding: 0.25rem 0.5rem;
@@ -457,26 +579,51 @@
 	}
 
 	.menstrual {
-		background: #fecaca;
-		color: #991b1b;
+		background: var(--badge-menstrual-bg);
+		color: var(--badge-menstrual-text);
 	}
 
 	.follicular {
-		background: #d9f99d;
-		color: #3f6212;
+		background: var(--badge-follicular-bg);
+		color: var(--badge-follicular-text);
 	}
 
 	.ovulation {
-		background: #bfdbfe;
-		color: #1e40af;
+		background: var(--badge-ovulation-bg);
+		color: var(--badge-ovulation-text);
 	}
 
 	.luteal {
-		background: #fed7aa;
-		color: #9a3412;
+		background: var(--badge-luteal-bg);
+		color: var(--badge-luteal-text);
 	}
 
-	tr:hover {
-		background: var(--bg-surface); /* Helpful for scanning rows */
+	/* Empty state */
+	.empty-state {
+		text-align: center;
+		padding: 3rem 1rem !important;
+	}
+
+	.empty-state-content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.empty-state-title {
+		margin: 0;
+		font-size: 1.1rem;
+		font-weight: 600;
+	}
+
+	.empty-state-subtitle {
+		margin: 0;
+		font-size: 0.9rem;
+		color: var(--text-muted);
+	}
+
+	/* Utilities */
+	.capitalize {
+		text-transform: capitalize;
 	}
 </style>

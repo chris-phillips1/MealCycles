@@ -49,6 +49,14 @@
 		--accent-hover: #d8b4fe;
 		--nav-bg: #111;
 		--nav-border: #222;
+		--badge-menstrual-bg: rgba(254, 202, 202, 0.15);
+		--badge-menstrual-text: #fca5a5;
+		--badge-follicular-bg: rgba(217, 249, 157, 0.15);
+		--badge-follicular-text: #bef264;
+		--badge-ovulation-bg: rgba(191, 219, 254, 0.15);
+		--badge-ovulation-text: #93c5fd;
+		--badge-luteal-bg: rgba(254, 215, 170, 0.15);
+		--badge-luteal-text: #fdba74;
 	}
 
 	:global([data-theme='light']) {
@@ -62,6 +70,14 @@
 		--accent-hover: #6d28d9;
 		--nav-bg: #ffffff;
 		--nav-border: #e0e0e0;
+		--badge-menstrual-bg: #fecaca;
+		--badge-menstrual-text: #991b1b;
+		--badge-follicular-bg: #d9f99d;
+		--badge-follicular-text: #3f6212;
+		--badge-ovulation-bg: #bfdbfe;
+		--badge-ovulation-text: #1e40af;
+		--badge-luteal-bg: #fed7aa;
+		--badge-luteal-text: #9a3412;
 	}
 
 	/* ── Global base styles ───────────────────────────────── */
