@@ -8,13 +8,17 @@
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 
 	let ingredients = $derived(getIngredients());
-	let deletingIngredient = $state<Ingredient | null>(null);
+	let filteredIngredients: Ingredient[] = $derived.by(() => {
+		return ingredients.filter((ingredient) =>
+			ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+		);
+	});
 
-	// Dialog variables
 	let addIngredientDialog: HTMLDialogElement;
 	let confirmationDialog: HTMLDialogElement;
 
-	// Form variables
+	let searchTerm = $state('');
+	let deletingIngredient = $state<Ingredient | null>(null);
 	let editingIngredient = $state<Ingredient | null>(null);
 	let validationErrors = $state<Record<string, string>>({});
 	let formData = $state({
@@ -236,21 +240,24 @@
 	<article class="filter">
 		<p>Category:</p>
 		<div class="filter-choices">
+			<button>All</button>
 			{#each Object.values(IngredientCategory) as category (category)}
-				<button>{category}</button>
+				<button class="capitalize">{category}</button>
 			{/each}
 		</div>
 	</article>
 	<article class="filter">
 		<p>Phase:</p>
 		<div class="filter-choices">
+			<button>All</button>
 			{#each Object.values(CyclePhase) as phase (phase)}
-				<button>{phase}</button>
+				<button class="capitalize">{phase}</button>
 			{/each}
 		</div>
 	</article>
-	<article>
+	<article class="filter-actions">
 		<button>Clear Filters</button>
+		<input type="search" bind:value={searchTerm} placeholder="Search ingredients..." />
 	</article>
 </section>
 
@@ -266,7 +273,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each ingredients as ingredient (ingredient.id)}
+			{#each filteredIngredients as ingredient (ingredient.id)}
 				<tr>
 					<td>{ingredient.name}</td>
 					<td>{ingredient.category}</td>
@@ -321,19 +328,32 @@
 
 	.filters {
 		display: flex;
-		gap: 1rem;
+		gap: 2rem;
 	}
 
 	.filter-choices {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-		max-width: 30vw;
+		max-width: 40vw;
 	}
 
 	.filter-choices button {
-		min-width: 100px;
+		min-width: 50px;
 		background: var(--bg-surface-2);
+	}
+
+	.filter-actions {
+		align-self: flex-end;
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+	}
+
+	input[type='search'] {
+		justify-self: flex-end;
+		align-self: flex-end;
 	}
 
 	table {
