@@ -8,6 +8,7 @@
 	let addIngredientDialog: HTMLDialogElement;
 
 	// Form variables
+	let validationErrors = $state<Record<string, string>>({});
 	let formData = $state({
 		name: '',
 		category: null,
@@ -51,14 +52,15 @@
 	}
 
 	function handleAddIngredientClose() {
-		console.log('Dialog closed');
+		resetForm();
 	}
 
-	function handleAddIngredientSubmit() {
-		closeAddIngredientDialog();
+	function handleAddIngredientSubmit(e: SubmitEvent) {
+		e.preventDefault();
 
-		const validationErrors = validateForm(formData);
-		if (validationErrors) {
+		const errors = validateForm(formData);
+		if (errors) {
+			validationErrors = errors;
 			return;
 		}
 
@@ -69,6 +71,21 @@
 			beneficialPhases: formData.beneficialPhases,
 			notes: formData.notes
 		});
+
+		closeAddIngredientDialog();
+		resetForm();
+	}
+
+	function resetForm() {
+		formData = {
+			name: '',
+			category: null,
+			unit: null,
+			beneficialPhases: [] as CyclePhase[],
+			notes: ''
+		};
+
+		validationErrors = {};
 	}
 </script>
 
@@ -81,31 +98,68 @@
 
 <pre>{JSON.stringify(formData, null, 2)}</pre>
 
-<dialog
-	bind:this={addIngredientDialog}
-	onclose={handleAddIngredientClose}
-	onsubmit={handleAddIngredientSubmit}
->
-	<form>
-		<input type="text" name="name" placeholder="Name" bind:value={formData.name} />
-		<select name="category" bind:value={formData.category}>
+<dialog bind:this={addIngredientDialog} onclose={handleAddIngredientClose}>
+	<form onsubmit={handleAddIngredientSubmit}>
+		<input
+			type="text"
+			name="name"
+			placeholder="Name"
+			bind:value={formData.name}
+			oninput={() => {
+				validationErrors.name = '';
+			}}
+		/>
+		{#if validationErrors.name}
+			<span class="error">{validationErrors.name}</span>
+		{/if}
+		<select
+			name="category"
+			bind:value={formData.category}
+			oninput={() => {
+				validationErrors.category = '';
+			}}
+		>
+			<option value={null}>Select a category...</option>
 			{#each Object.values(IngredientCategory) as category (category)}
 				<option value={category}>{category}</option>
 			{/each}
 		</select>
+		{#if validationErrors.category}
+			<span class="error">{validationErrors.category}</span>
+		{/if}
 
-		<select name="unit" bind:value={formData.unit}>
+		<select
+			name="unit"
+			bind:value={formData.unit}
+			oninput={() => {
+				validationErrors.unit = '';
+			}}
+		>
+			<option value={null}>Select a unit...</option>
 			{#each Object.values(Unit) as unit (unit)}
 				<option value={unit}>{unit}</option>
 			{/each}
 		</select>
+		{#if validationErrors.unit}
+			<span class="error">{validationErrors.unit}</span>
+		{/if}
 
 		{#each Object.values(CyclePhase) as phase (phase)}
 			<label class="capitalize">
-				<input type="checkbox" value={phase} bind:group={formData.beneficialPhases} />
+				<input
+					type="checkbox"
+					value={phase}
+					bind:group={formData.beneficialPhases}
+					oninput={() => {
+						validationErrors.beneficialPhases = '';
+					}}
+				/>
 				{phase}
 			</label>
 		{/each}
+		{#if validationErrors.beneficialPhases}
+			<span class="error">{validationErrors.beneficialPhases}</span>
+		{/if}
 		<textarea name="notes" placeholder="Notes" bind:value={formData.notes}></textarea>
 		<input type="button" value="Cancel" onclick={closeAddIngredientDialog} />
 		<input type="submit" value="Add Ingredient" />
@@ -187,6 +241,12 @@
 	header nav button {
 		max-height: 100%;
 		padding: 0.5rem;
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 
 	.capitalize {
