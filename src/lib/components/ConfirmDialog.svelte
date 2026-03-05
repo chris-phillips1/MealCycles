@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { title = 'Confirm', message, onConfirm, onCancel } = $props();
+	let { title = 'Confirm', message, onConfirm } = $props();
 	let dialog: HTMLDialogElement;
 
 	export function show() {
@@ -11,16 +11,87 @@
 </script>
 
 <dialog bind:this={dialog}>
-	<h2>{title}</h2>
-	<p>{message}</p>
-	<div class="form-buttons">
-		<button onclick={onCancel}>Cancel</button>
-		<button onclick={onConfirm}>Confirm</button>
+	<div class="dialog-content">
+		<h2>{title}</h2>
+		<p>{message}</p>
+		<div class="dialog-actions">
+			<button type="button" class="secondary" onclick={close}>Cancel</button>
+			<button
+				type="button"
+				class="danger"
+				onclick={() => {
+					onConfirm();
+					close();
+				}}
+			>
+				Delete
+			</button>
+		</div>
 	</div>
 </dialog>
 
 <style>
-	.form-buttons {
-		align-self: flex-end;
+	dialog {
+		background: var(--bg-surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 0;
+		max-width: 450px;
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+	}
+
+	dialog::backdrop {
+		background: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
+	}
+
+	.dialog-content {
+		padding: 2rem;
+	}
+
+	h2 {
+		margin: 0 0 1rem 0;
+		font-size: 1.25rem;
+		color: var(--text);
+	}
+
+	p {
+		margin: 0 0 2rem 0;
+		color: var(--text-muted);
+		line-height: 1.5;
+	}
+
+	.dialog-actions {
+		display: flex;
+		gap: 0.75rem;
+		justify-content: flex-end;
+	}
+
+	button {
+		padding: 0.6rem 1.25rem;
+		font-weight: 500;
+		transition: all 0.2s ease;
+	}
+
+	.secondary {
+		background: var(--bg-surface-2);
+		border-color: var(--border);
+	}
+
+	.secondary:hover {
+		background: var(--bg);
+	}
+
+	.danger {
+		background: rgba(239, 68, 68, 0.1);
+		color: #ef4444;
+		border-color: rgba(239, 68, 68, 0.3);
+	}
+
+	.danger:hover {
+		background: #ef4444;
+		color: white;
+		border-color: #ef4444;
 	}
 </style>

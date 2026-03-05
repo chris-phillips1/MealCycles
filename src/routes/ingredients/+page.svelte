@@ -1,6 +1,4 @@
 <script lang="ts">
-	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
-	import FormDialog from '$lib/components/FormDialog.svelte';
 	import {
 		addIngredient,
 		getIngredients,
@@ -8,242 +6,163 @@
 		updateIngredient
 	} from '$lib/stores/state.svelte';
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let ingredients = $derived(getIngredients());
-	let filteredIngredients: Ingredient[] = $derived.by(() => {
-		let filtered = ingredients;
 
-		// Filter by search term
-		if (filters.search.trim()) {
-			filtered = filtered.filter((ingredient) =>
-				ingredient.name.toLowerCase().includes(filters.search.toLowerCase())
-			);
-		}
-
-		// Filter by category
-		if (filters.categories.length > 0) {
-			filtered = filtered.filter((ingredient) => filters.categories.includes(ingredient.category));
-		}
-
-		// Filter by phase
-		if (filters.phases.length > 0) {
-			filtered = filtered.filter((ingredient) =>
-				filters.phases.some((phase) => ingredient.beneficialPhases.includes(phase))
-			);
-		}
-
-		return filtered;
-	});
-
-	let ingredientFormDialog: FormDialog;
+	// ========== DIALOGS ==========
+	let formDialog: HTMLDialogElement;
 	let confirmDialog: ConfirmDialog;
 
+	// ========== FILTERS ==========
 	let filters = $state({
 		search: '',
 		categories: [] as IngredientCategory[],
 		phases: [] as CyclePhase[]
 	});
 
-	let deletingIngredient = $state<Ingredient | null>(null);
+	let filteredIngredients = $derived.by(() => {
+		return ingredients
+			.filter(
+				(i) => !filters.search.trim() || i.name.toLowerCase().includes(filters.search.toLowerCase())
+			)
+			.filter((i) => !filters.categories.length || filters.categories.includes(i.category))
+			.filter(
+				(i) => !filters.phases.length || filters.phases.some((p) => i.beneficialPhases.includes(p))
+			);
+	});
+
+	function toggleCategory(category: IngredientCategory) {
+		filters.categories = filters.categories.includes(category)
+			? filters.categories.filter((c) => c !== category)
+			: [...filters.categories, category];
+	}
+
+	function togglePhase(phase: CyclePhase) {
+		filters.phases = filters.phases.includes(phase)
+			? filters.phases.filter((p) => p !== phase)
+			: [...filters.phases, phase];
+	}
+
+	function clearFilters() {
+		filters = { search: '', categories: [], phases: [] };
+	}
+
+	// ========== FORM MANAGEMENT ==========
 	let editingIngredient = $state<Ingredient | null>(null);
 	let validationErrors = $state<Record<string, string>>({});
 	let formData = $state({
 		name: '',
-		category: null,
-		unit: null,
+		category: null as IngredientCategory | null,
+		unit: null as Unit | null,
 		beneficialPhases: [] as CyclePhase[],
 		notes: ''
 	});
 
-	function clearFilters() {
-		filters = {
-			search: '',
-			categories: [],
-			phases: []
-		};
-	}
-
-	function toggleCategory(category: IngredientCategory) {
-		if (filters.categories.includes(category)) {
-			filters.categories = filters.categories.filter((c) => c !== category);
-		} else {
-			filters.categories = [...filters.categories, category];
-		}
-	}
-
-	function togglePhase(phase: CyclePhase) {
-		if (filters.phases.includes(phase)) {
-			filters.phases = filters.phases.filter((p) => p !== phase);
-		} else {
-			filters.phases = [...filters.phases, phase];
-		}
-	}
-
-	function handleEditIngredient(ingredient: Ingredient) {
-		editingIngredient = ingredient;
-		formData = {
-			name: ingredient.name,
-			category: ingredient.category,
-			unit: ingredient.unit,
-			beneficialPhases: ingredient.beneficialPhases,
-			notes: ingredient.notes ?? ''
-		};
+	function openForm(ingredient?: Ingredient) {
+		editingIngredient = ingredient ?? null;
+		formData = ingredient
+			? {
+					name: ingredient.name,
+					category: ingredient.category,
+					unit: ingredient.unit,
+					beneficialPhases: ingredient.beneficialPhases,
+					notes: ingredient.notes ?? ''
+				}
+			: {
+					name: '',
+					category: null,
+					unit: null,
+					beneficialPhases: [],
+					notes: ''
+				};
 		validationErrors = {};
-		ingredientFormDialog?.show();
+		formDialog?.showModal();
 	}
 
-	function validateForm(data: typeof formData) {
-		const errors: Record<string, string> = {};
-
-		if (!data.name.trim()) {
-			errors.name = 'Name is required';
-		}
-
-		if (!data.category) {
-			errors.category = 'Category is required';
-		}
-
-		if (!data.unit) {
-			errors.unit = 'Unit is required';
-		}
-
-		if (data.beneficialPhases.length === 0) {
-			errors.beneficialPhases = 'Select at least one phase';
-		}
-
-		return Object.keys(errors).length > 0 ? errors : null;
-	}
-
-	function handleDeleteIngredient(ingredient: Ingredient) {
-		deletingIngredient = ingredient;
-		confirmDialog?.show();
-	}
-
-	function deleteIngredient() {
-		if (deletingIngredient?.id) {
-			removeIngredient(deletingIngredient!.id);
-			confirmDialog?.close();
-		}
-	}
-
-	function handleAddIngredient() {
+	function closeForm() {
+		formDialog?.close();
 		editingIngredient = null;
-		formData = {
-			name: '',
-			category: null,
-			unit: null,
-			beneficialPhases: [] as CyclePhase[],
-			notes: ''
-		};
 		validationErrors = {};
-		ingredientFormDialog?.show();
 	}
 
-	function handleAddIngredientClose() {
-		resetForm();
+	function validateForm() {
+		const errors: Record<string, string> = {};
+		if (!formData.name.trim()) errors.name = 'Name is required';
+		if (!formData.category) errors.category = 'Category is required';
+		if (!formData.unit) errors.unit = 'Unit is required';
+		if (!formData.beneficialPhases.length) errors.beneficialPhases = 'Select at least one phase';
+		return Object.keys(errors).length ? errors : null;
 	}
 
-	function handleAddIngredientSubmit(e: SubmitEvent) {
+	function saveIngredient(e: SubmitEvent) {
 		e.preventDefault();
 
-		const errors = validateForm(formData);
+		const errors = validateForm();
 		if (errors) {
 			validationErrors = errors;
 			return;
 		}
 
-		if (editingIngredient) {
-			updateIngredient(editingIngredient.id, {
-				name: formData.name,
-				category: formData.category!,
-				unit: formData.unit!,
-				beneficialPhases: formData.beneficialPhases,
-				notes: formData.notes
-			});
-		} else {
-			addIngredient({
-				name: formData.name,
-				category: formData.category!,
-				unit: formData.unit!,
-				beneficialPhases: formData.beneficialPhases,
-				notes: formData.notes
-			});
-		}
-
-		ingredientFormDialog?.close();
-		resetForm();
-	}
-
-	function resetForm() {
-		formData = {
-			name: '',
-			category: null,
-			unit: null,
-			beneficialPhases: [] as CyclePhase[],
-			notes: ''
+		const data = {
+			name: formData.name,
+			category: formData.category!,
+			unit: formData.unit!,
+			beneficialPhases: formData.beneficialPhases,
+			notes: formData.notes
 		};
 
-		validationErrors = {};
-		editingIngredient = null;
+		if (editingIngredient) {
+			updateIngredient(editingIngredient.id, data);
+		} else {
+			addIngredient(data);
+		}
+
+		closeForm();
+	}
+
+	// ========== DELETE ==========
+	let deletingIngredient = $state<Ingredient | null>(null);
+
+	function confirmDelete(ingredient: Ingredient) {
+		deletingIngredient = ingredient;
+		confirmDialog.show();
+	}
+
+	function deleteIngredient() {
+		if (deletingIngredient) {
+			removeIngredient(deletingIngredient.id);
+		}
 	}
 </script>
 
-<header>
-	<h1>Ingredients</h1>
-	<nav>
-		<button onclick={handleAddIngredient}>Add Ingredient</button>
-	</nav>
-</header>
-
-<FormDialog
-	bind:this={ingredientFormDialog}
-	title={editingIngredient ? 'Edit Ingredient' : 'Add Ingredient'}
-	onClose={handleAddIngredientClose}
->
-	<form onsubmit={handleAddIngredientSubmit}>
+<!-- Dialogs -->
+<dialog bind:this={formDialog} onclose={closeForm}>
+	<h2>{editingIngredient ? 'Edit' : 'Add'} Ingredient</h2>
+	<form onsubmit={saveIngredient}>
 		<input
 			type="text"
-			name="name"
 			placeholder="Name"
 			bind:value={formData.name}
-			oninput={() => {
-				validationErrors.name = '';
-			}}
+			oninput={() => (validationErrors.name = '')}
 		/>
-		{#if validationErrors.name}
-			<span class="error">{validationErrors.name}</span>
-		{/if}
-		<select
-			name="category"
-			bind:value={formData.category}
-			oninput={() => {
-				validationErrors.category = '';
-			}}
-		>
-			<option value={null}>Select a category...</option>
-			{#each Object.values(IngredientCategory) as category (category)}
-				<option value={category}>{category}</option>
+		{#if validationErrors.name}<span class="error">{validationErrors.name}</span>{/if}
+
+		<select bind:value={formData.category} oninput={() => (validationErrors.category = '')}>
+			<option value={null}>Select category...</option>
+			{#each Object.values(IngredientCategory) as cat (cat)}
+				<option value={cat}>{cat}</option>
 			{/each}
 		</select>
-		{#if validationErrors.category}
-			<span class="error">{validationErrors.category}</span>
-		{/if}
+		{#if validationErrors.category}<span class="error">{validationErrors.category}</span>{/if}
 
-		<select
-			name="unit"
-			bind:value={formData.unit}
-			oninput={() => {
-				validationErrors.unit = '';
-			}}
-		>
-			<option value={null}>Select a unit...</option>
+		<select bind:value={formData.unit} oninput={() => (validationErrors.unit = '')}>
+			<option value={null}>Select unit...</option>
 			{#each Object.values(Unit) as unit (unit)}
 				<option value={unit}>{unit}</option>
 			{/each}
 		</select>
-		{#if validationErrors.unit}
-			<span class="error">{validationErrors.unit}</span>
-		{/if}
+		{#if validationErrors.unit}<span class="error">{validationErrors.unit}</span>{/if}
 
 		{#each Object.values(CyclePhase) as phase (phase)}
 			<label class="capitalize">
@@ -251,32 +170,38 @@
 					type="checkbox"
 					value={phase}
 					bind:group={formData.beneficialPhases}
-					oninput={() => {
-						validationErrors.beneficialPhases = '';
-					}}
+					oninput={() => (validationErrors.beneficialPhases = '')}
 				/>
 				{phase}
 			</label>
 		{/each}
-		{#if validationErrors.beneficialPhases}
-			<span class="error">{validationErrors.beneficialPhases}</span>
-		{/if}
-		<textarea name="notes" placeholder="Notes (optional)" rows="3" bind:value={formData.notes}>
-		</textarea>
+		{#if validationErrors.beneficialPhases}<span class="error"
+				>{validationErrors.beneficialPhases}</span
+			>{/if}
+
+		<textarea placeholder="Notes (optional)" rows="3" bind:value={formData.notes}></textarea>
+
 		<div class="form-buttons">
-			<input type="button" value="Cancel" onclick={() => ingredientFormDialog?.close()} />
-			<input type="submit" value={editingIngredient ? 'Update Ingredient' : 'Add Ingredient'} />
+			<button type="button" onclick={closeForm}>Cancel</button>
+			<button type="submit">{editingIngredient ? 'Update' : 'Add'}</button>
 		</div>
 	</form>
-</FormDialog>
+</dialog>
 
 <ConfirmDialog
 	bind:this={confirmDialog}
+	title="Delete Ingredient"
 	message="Are you sure you want to delete this ingredient?"
 	onConfirm={deleteIngredient}
-	onCancel={() => confirmDialog?.close()}
 />
 
+<!-- Header -->
+<header>
+	<h1>Ingredients</h1>
+	<button onclick={() => openForm()}>Add Ingredient</button>
+</header>
+
+<!-- Filters -->
 <section class="filters">
 	<article class="filter">
 		<p>Category:</p>
@@ -290,6 +215,7 @@
 			{/each}
 		</div>
 	</article>
+
 	<article class="filter">
 		<p>Phase:</p>
 		<div class="filter-choices">
@@ -302,12 +228,14 @@
 			{/each}
 		</div>
 	</article>
+
 	<article class="filter-actions">
 		<button onclick={clearFilters}>Clear Filters</button>
-		<input type="search" bind:value={filters.search} placeholder="Search ingredients..." />
+		<input type="search" bind:value={filters.search} placeholder="Search..." />
 	</article>
 </section>
 
+<!-- Table -->
 <section class="table">
 	<table>
 		<thead>
@@ -323,41 +251,39 @@
 			{#each filteredIngredients as ingredient (ingredient.id)}
 				<tr>
 					<td>{ingredient.name}</td>
-					<td>{ingredient.category}</td>
+					<td class="capitalize">{ingredient.category}</td>
 					<td>
 						{#each ingredient.beneficialPhases as phase (phase)}
 							<span class="badge {phase}">{phase}</span>
 						{/each}
 					</td>
-					<td>{ingredient.notes}</td>
+					<td>{ingredient.notes ?? ''}</td>
 					<td>
 						<div class="action-buttons">
-							<button onclick={() => handleEditIngredient(ingredient)}>Edit</button>
-							<button class="danger" onclick={() => handleDeleteIngredient(ingredient)}
-								>Delete</button
-							>
+							<button onclick={() => openForm(ingredient)}>Edit</button>
+							<button class="danger" onclick={() => confirmDelete(ingredient)}>Delete</button>
 						</div>
 					</td>
 				</tr>
 			{:else}
-				{#if filters.search.trim() || filters.categories.length > 0 || filters.phases.length > 0}
-					<tr>
-						<td colspan="5" class="empty-state">
+				{#if filters.search || filters.categories.length || filters.phases.length}
+					<tr
+						><td colspan="5" class="empty-state">
 							<div class="empty-state-content">
 								<p class="empty-state-title">No ingredients found</p>
 								<p class="empty-state-subtitle">Try adjusting your filters</p>
 							</div>
-						</td>
-					</tr>
+						</td></tr
+					>
 				{:else}
-					<tr>
-						<td colspan="5" class="empty-state">
+					<tr
+						><td colspan="5" class="empty-state">
 							<div class="empty-state-content">
 								<p class="empty-state-title">No ingredients yet</p>
 								<p class="empty-state-subtitle">Click "Add Ingredient" to get started</p>
 							</div>
-						</td>
-					</tr>
+						</td></tr
+					>
 				{/if}
 			{/each}
 		</tbody>
@@ -365,7 +291,6 @@
 </section>
 
 <style>
-	/* Header */
 	header {
 		display: flex;
 		justify-content: space-between;
@@ -378,15 +303,112 @@
 		font-size: 2rem;
 	}
 
-	header nav button {
-		padding: 0.6rem 1.2rem;
-		font-weight: 500;
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	/* Form Dialog */
+	dialog {
+		background: var(--bg-surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 2rem;
+		min-width: 500px;
+		max-width: 600px;
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+	}
+
+	dialog::backdrop {
+		background: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
+	}
+
+	dialog h2 {
+		margin: 0 0 1.5rem 0;
+		font-size: 1.5rem;
+		color: var(--text);
 	}
 
 	form {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+	}
+
+	/* Form inputs */
+	input[type='text'],
+	select,
+	textarea {
+		width: 100%;
+		font-size: 1rem;
+	}
+
+	textarea {
+		resize: vertical;
+		min-height: 80px;
+		font-family: inherit;
+	}
+
+	/* Checkbox group */
+	label.capitalize {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem;
+		border-radius: 4px;
+		transition: background-color 0.15s ease;
+		cursor: pointer;
+	}
+
+	label.capitalize:hover {
+		background: var(--bg-surface-2);
+	}
+
+	label.capitalize input[type='checkbox'] {
+		width: auto;
+		cursor: pointer;
+	}
+
+	/* Error messages */
+	.error {
+		color: #ef4444;
+		font-size: 0.85rem;
+		margin-top: -0.5rem;
+		display: block;
+	}
+
+	/* Form actions */
+	.form-buttons {
+		display: flex;
+		gap: 0.75rem;
+		justify-content: flex-end;
+		margin-top: 0.5rem;
+		padding-top: 0.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.form-buttons button {
+		padding: 0.6rem 1.25rem;
+		font-weight: 500;
+	}
+
+	.form-buttons button[type='button'] {
+		background: var(--bg-surface-2);
+		border-color: var(--border);
+	}
+
+	.form-buttons button[type='submit'] {
+		background: var(--accent);
+		color: white;
+		border-color: var(--accent);
+	}
+
+	.form-buttons button[type='submit']:hover {
+		background: var(--accent-hover);
+		border-color: var(--accent-hover);
 	}
 
 	textarea {
