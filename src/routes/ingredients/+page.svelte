@@ -1,14 +1,7 @@
 <script lang="ts">
-	import {
-		addIngredient,
-		getIngredients,
-		removeIngredient,
-		updateIngredient
-	} from '$lib/stores/state.svelte';
+	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
-
-	let ingredients = $derived(getIngredients());
 
 	// ========== DIALOGS ==========
 	let formDialog: HTMLDialogElement;
@@ -22,7 +15,7 @@
 	});
 
 	let filteredIngredients = $derived.by(() => {
-		return ingredients
+		return appState.ingredients
 			.filter(
 				(i) => !filters.search.trim() || i.name.toLowerCase().includes(filters.search.toLowerCase())
 			)
@@ -113,9 +106,9 @@
 		};
 
 		if (editingIngredient) {
-			updateIngredient(editingIngredient.id, data);
+			appState.updateIngredient(editingIngredient.id, data);
 		} else {
-			addIngredient(data);
+			appState.addIngredient(data);
 		}
 
 		closeForm();
@@ -131,7 +124,7 @@
 
 	function deleteIngredient() {
 		if (deletingIngredient) {
-			removeIngredient(deletingIngredient.id);
+			appState.removeIngredient(deletingIngredient.id);
 		}
 	}
 </script>

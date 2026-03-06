@@ -1,34 +1,23 @@
 <script lang="ts">
-	import {
-		getCycle,
-		getIngredients,
-		getMealPlans,
-		getMeals,
-		updateCycle
-	} from '$lib/stores/state.svelte';
+	import { appState } from '$lib/stores/state.svelte';
 	import DataCard from '$lib/components/DataCard.svelte';
 
-	const cycle = $derived(getCycle());
-	const ingredients = $derived(getIngredients());
-	const meals = $derived(getMeals());
-	const mealPlans = $derived(getMealPlans());
-
 	let formData = $state({
-		startDate: getCycle().startDate,
-		cycleLength: getCycle().cycleLength
+		startDate: appState.cycle.startDate,
+		cycleLength: appState.cycle.cycleLength
 	});
 
 	function onsubmit(event: Event) {
 		event.preventDefault();
-		updateCycle({ startDate: formData.startDate, cycleLength: formData.cycleLength });
+		appState.updateCycle({ startDate: formData.startDate, cycleLength: formData.cycleLength });
 	}
 </script>
 
 <div class="data-model">
-	<DataCard name="Cycle" jsonObject={cycle} />
-	<DataCard name="Ingredients" jsonObject={ingredients} />
-	<DataCard name="Meals" jsonObject={meals} />
-	<DataCard name="Meal Plans" jsonObject={mealPlans} />
+	<DataCard name="Cycle" jsonObject={appState.cycle} />
+	<DataCard name="Ingredients" jsonObject={appState.ingredients} />
+	<DataCard name="Meals" jsonObject={appState.meals} />
+	<DataCard name="Meal Plans" jsonObject={appState.mealPlans} />
 
 	<div class="data-model-item">
 		<h2>Edit Cycle</h2>

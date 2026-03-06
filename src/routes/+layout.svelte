@@ -1,18 +1,16 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
-	import { getConfig, updateConfig } from '$lib/stores/state.svelte';
+	import { appState } from '$lib/stores/state.svelte';
 
 	let { children } = $props();
 
-	const config = $derived(getConfig());
-
 	$effect(() => {
-		document.documentElement.setAttribute('data-theme', config.theme ?? 'dark');
+		document.documentElement.setAttribute('data-theme', appState.config.theme ?? 'dark');
 	});
 
 	function toggleTheme() {
-		updateConfig({ theme: config.theme === 'dark' ? 'light' : 'dark' });
+		appState.updateConfig({ theme: appState.config.theme === 'dark' ? 'light' : 'dark' });
 	}
 </script>
 
@@ -28,7 +26,7 @@
 	<a href="/grocery" class:active={page.url.pathname.startsWith('/grocery')}>Grocery</a>
 	<p>Meal Cycles</p>
 	<button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
-		{config.theme === 'dark' ? '☀️' : '🌙'}
+		{appState.config.theme === 'dark' ? '☀️' : '🌙'}
 	</button>
 </nav>
 
