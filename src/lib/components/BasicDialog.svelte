@@ -1,5 +1,17 @@
 <script lang="ts">
-	let { title = 'Confirm', message, onConfirm } = $props();
+	let {
+		title,
+		message,
+		cancelDetails,
+		confirmDetails,
+		children
+	}: {
+		title: string;
+		message: string;
+		cancelDetails: { label: string };
+		confirmDetails: { label: string; onConfirm: () => void };
+		children?: () => void;
+	} = $props();
 	let dialog: HTMLDialogElement;
 
 	export function show() {
@@ -11,22 +23,24 @@
 </script>
 
 <dialog bind:this={dialog}>
-	<div class="dialog-content">
-		<h2>{title}</h2>
-		<p>{message}</p>
-		<div class="dialog-actions">
-			<button type="button" class="secondary" onclick={close}>Cancel</button>
-			<button
-				type="button"
-				class="danger"
-				onclick={() => {
-					onConfirm();
-					close();
-				}}
-			>
-				Delete
-			</button>
-		</div>
+	<h2>{title}</h2>
+	<p>{message}</p>
+	<div class="dialog-form">
+		{#if children}
+			{@render children()}
+		{/if}
+	</div>
+	<div class="dialog-actions">
+		<button type="button" class="secondary" onclick={close}>{cancelDetails.label}</button>
+		<button
+			type="button"
+			onclick={() => {
+				confirmDetails.onConfirm();
+				close();
+			}}
+		>
+			{confirmDetails.label}
+		</button>
 	</div>
 </dialog>
 

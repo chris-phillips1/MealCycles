@@ -5,7 +5,7 @@
 
 	let { filters = $bindable() }: { filters: IngredientFilters } = $props();
 
-	function clearFilters() {
+	function resetFilters() {
 		filters = { ...DEFAULT_INGREDIENT_FILTERS };
 	}
 </script>
@@ -46,7 +46,7 @@
 	)}
 
 	<div class="filter-actions">
-		<button onclick={clearFilters}>Clear Filters</button>
+		<button onclick={resetFilters}>Clear Filters</button>
 		<input type="search" bind:value={filters.search} placeholder="Search..." />
 	</div>
 </section>
