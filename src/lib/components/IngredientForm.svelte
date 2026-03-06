@@ -11,18 +11,6 @@
 
 	let formInformation = $state({ ...DEFAULT_INGREDIENT_FORM });
 
-	function updateFormValidation(
-		validation: 'required',
-		property: keyof (typeof formInformation)['validation']['required'],
-		value: boolean
-	) {
-		formInformation.validation[validation][property] = value;
-	}
-
-	function updateFormValue() {}
-
-	function updateFormErrors() {}
-
 	export function open(ingredient?: Ingredient) {
 		mode = ingredient ? { editing: true, ingredient } : { editing: false };
 
@@ -33,33 +21,28 @@
 		dialog.open();
 	}
 
-	function validate(): boolean {
-		const next: Record<string, string> = {};
-		if (!formData.name.trim()) next.name = 'Name is required';
-		if (!formData.category) next.category = 'Category is required';
-		if (!formData.unit) next.unit = 'Unit is required';
-		if (!formData.beneficialPhases.length) next.beneficialPhases = 'Select at least one phase';
-		formErrors = next;
-		return Object.keys(next).length === 0;
-	}
-
-	function validateForm(): boolean {}
-
 	function resetForm() {
 		formInformation = { ...DEFAULT_INGREDIENT_FORM };
 	}
 
-	function handleFormSubmit() {}
+	function validateForm(): boolean {
+		if (!formInformation.values.name.trim()) formInformation.errors.name = 'Name is required';
+		if (!formInformation.values.category) formInformation.errors.category = 'Category is required';
+		if (!formInformation.values.unit) formInformation.errors.unit = 'Unit is required';
+		if (!formInformation.values.beneficialPhases.length)
+			formInformation.errors.beneficialPhases = 'Select at least one phase';
+		return Object.keys(formInformation.errors).length === 0;
+	}
 
-	function handleSubmit() {
-		if (!validate()) return;
+	function handleFormSubmit() {
+		if (!validateForm()) return;
 
 		const data = {
-			name: formData.name.trim(),
-			category: formData.category!,
-			unit: formData.unit!,
-			beneficialPhases: formData.beneficialPhases,
-			notes: formData.notes.trim()
+			name: formInformation.values.name.trim(),
+			category: formInformation.values.category!,
+			unit: formInformation.values.unit!,
+			beneficialPhases: formInformation.values.beneficialPhases,
+			notes: formInformation.values.notes.trim()
 		};
 
 		if (mode.editing) {
@@ -68,6 +51,7 @@
 			appState.addIngredient(data);
 		}
 
+		resetForm();
 		dialog.close();
 	}
 </script>
@@ -76,37 +60,45 @@
 	<form
 		onsubmit={(e) => {
 			e.preventDefault();
-			handleSubmit();
+			handleFormSubmit();
 		}}
 	>
 		<div class="field">
 			<input
 				type="text"
 				placeholder="Name"
-				bind:value={formData.name}
-				oninput={() => (formErrors.name = '')}
+				bind:value={formInformation.values.name}
+				oninput={() => (formInformation.errors.name = '')}
 			/>
-			{#if formErrors.name}<span class="error">{formErrors.name}</span>{/if}
+			{#if formInformation.errors.name}<span class="error">{formInformation.errors.name}</span>{/if}
 		</div>
 
 		<div class="field">
-			<select bind:value={formData.category} oninput={() => (formErrors.category = '')}>
+			<select
+				bind:value={formInformation.values.category}
+				oninput={() => (formInformation.errors.category = '')}
+			>
 				<option value={null}>Select category...</option>
 				{#each Object.values(IngredientCategory) as cat (cat)}
 					<option value={cat}>{cat}</option>
 				{/each}
 			</select>
-			{#if formErrors.category}<span class="error">{formErrors.category}</span>{/if}
+			{#if formInformation.errors.category}<span class="error"
+					>{formInformation.errors.category}</span
+				>{/if}
 		</div>
 
 		<div class="field">
-			<select bind:value={formData.unit} oninput={() => (formErrors.unit = '')}>
+			<select
+				bind:value={formInformation.values.unit}
+				oninput={() => (formInformation.errors.unit = '')}
+			>
 				<option value={null}>Select unit...</option>
 				{#each Object.values(Unit) as unit (unit)}
 					<option value={unit}>{unit}</option>
 				{/each}
 			</select>
-			{#if formErrors.unit}<span class="error">{formErrors.unit}</span>{/if}
+			{#if formInformation.errors.unit}<span class="error">{formInformation.errors.unit}</span>{/if}
 		</div>
 
 		<div class="field">
@@ -117,18 +109,21 @@
 						<input
 							type="checkbox"
 							value={phase}
-							bind:group={formData.beneficialPhases}
-							oninput={() => (formErrors.beneficialPhases = '')}
+							bind:group={formInformation.values.beneficialPhases}
+							oninput={() => (formInformation.errors.beneficialPhases = '')}
 						/>
 						<span class="capitalize">{phase}</span>
 					</label>
 				{/each}
 			</div>
-			{#if formErrors.beneficialPhases}<span class="error">{formErrors.beneficialPhases}</span>{/if}
+			{#if formInformation.errors.beneficialPhases}<span class="error"
+					>{formInformation.errors.beneficialPhases}</span
+				>{/if}
 		</div>
 
 		<div class="field">
-			<textarea placeholder="Notes (optional)" rows="3" bind:value={formData.notes}></textarea>
+			<textarea placeholder="Notes (optional)" rows="3" bind:value={formInformation.values.notes}
+			></textarea>
 		</div>
 
 		<div class="form-actions">

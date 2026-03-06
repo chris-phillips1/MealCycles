@@ -1,4 +1,5 @@
-import { type IngredientFilters, type IngredientForm } from './types';
+import type { IngredientForm } from './forms';
+import { type IngredientFilters } from './types';
 
 export const DEFAULT_INGREDIENT_FILTERS: IngredientFilters = {
 	search: '',
@@ -14,20 +15,5 @@ export const DEFAULT_INGREDIENT_FORM: IngredientForm = {
 		beneficialPhases: [],
 		notes: ''
 	},
-	validation: {
-		required: {
-			name: true,
-			category: true,
-			unit: true,
-			beneficialPhases: true,
-			notes: false
-		}
-	},
-	errors: {
-		name: undefined,
-		category: undefined,
-		unit: undefined,
-		beneficialPhases: undefined,
-		notes: undefined
-	}
+	errors: {}
 };
