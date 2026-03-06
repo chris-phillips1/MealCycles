@@ -14,7 +14,7 @@
 	} = $props();
 	let dialog: HTMLDialogElement;
 
-	export function show() {
+	export function open() {
 		dialog?.showModal();
 	}
 	export function close() {
