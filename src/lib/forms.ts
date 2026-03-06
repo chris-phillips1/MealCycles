@@ -1,12 +1,9 @@
-import type { CyclePhase, IngredientCategory, Unit } from './types';
+import type { Ingredient, IngredientCategory, Unit } from './types';
 
 export interface IngredientForm {
-	values: {
-		name: string;
+	values: Omit<Ingredient, 'id'> & {
 		category: IngredientCategory | null;
 		unit: Unit | null;
-		beneficialPhases: CyclePhase[];
-		notes: string;
 	};
 	errors: {
 		name?: string;

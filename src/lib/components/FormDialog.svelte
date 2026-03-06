@@ -7,7 +7,7 @@
 		children
 	}: {
 		title: string;
-		children: Snippet<[{ close: () => void }]>;
+		children: Snippet;
 	} = $props();
 
 	let shell: DialogShell;
@@ -24,7 +24,7 @@
 <DialogShell bind:this={shell} closeOnBackdrop={false}>
 	<h2>{title}</h2>
 	<div class="form-content">
-		{@render children({ close })}
+		{@render children()}
 	</div>
 </DialogShell>
 

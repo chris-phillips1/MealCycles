@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FormDialog from '$lib/components/FormDialog.svelte';
-	import { DEFAULT_INGREDIENT_FORM } from '$lib/constants';
+	import { createDefaultIngredientForm } from '$lib/constants';
 	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 
@@ -9,23 +9,25 @@
 	let dialog: FormDialog;
 	let mode = $state<FormMode>({ editing: false });
 
-	let formInformation = $state({ ...DEFAULT_INGREDIENT_FORM });
+	let formInformation = $state(createDefaultIngredientForm());
 
 	export function open(ingredient?: Ingredient) {
+		resetForm();
 		mode = ingredient ? { editing: true, ingredient } : { editing: false };
 
 		formInformation.values = mode.editing
 			? { ...mode.ingredient, notes: mode.ingredient.notes ?? '' }
-			: { ...DEFAULT_INGREDIENT_FORM.values };
+			: { ...createDefaultIngredientForm().values };
 
 		dialog.open();
 	}
 
 	function resetForm() {
-		formInformation = { ...DEFAULT_INGREDIENT_FORM };
+		formInformation = { ...createDefaultIngredientForm() };
 	}
 
 	function validateForm(): boolean {
+		formInformation.errors = {};
 		if (!formInformation.values.name.trim()) formInformation.errors.name = 'Name is required';
 		if (!formInformation.values.category) formInformation.errors.category = 'Category is required';
 		if (!formInformation.values.unit) formInformation.errors.unit = 'Unit is required';

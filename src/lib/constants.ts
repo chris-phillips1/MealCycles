@@ -7,13 +7,15 @@ export const DEFAULT_INGREDIENT_FILTERS: IngredientFilters = {
 	phases: []
 };
 
-export const DEFAULT_INGREDIENT_FORM: IngredientForm = {
-	values: {
-		name: '',
-		category: null,
-		unit: null,
-		beneficialPhases: [],
-		notes: ''
-	},
-	errors: {}
-};
+export function createDefaultIngredientForm(): IngredientForm {
+	return {
+		values: {
+			name: '',
+			category: null,
+			unit: null,
+			beneficialPhases: [],
+			notes: ''
+		},
+		errors: {}
+	};
+}

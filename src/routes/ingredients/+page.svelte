@@ -128,24 +128,6 @@
 		font-size: 2rem;
 	}
 
-	/* Error messages */
-	.error {
-		color: #ef4444;
-		font-size: 0.85rem;
-		margin-top: -0.5rem;
-		display: block;
-	}
-
-	/* Form actions */
-	.form-buttons {
-		display: flex;
-		gap: 0.75rem;
-		justify-content: flex-end;
-		margin-top: 0.5rem;
-		padding-top: 0.5rem;
-		border-top: 1px solid var(--border);
-	}
-
 	/* Table */
 	table {
 		width: 100%;
