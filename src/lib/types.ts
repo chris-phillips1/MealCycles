@@ -66,11 +66,29 @@ export interface IngredientFilters {
 }
 
 export interface IngredientForm {
-	name: string;
-	category: IngredientCategory | null;
-	unit: Unit | null;
-	beneficialPhases: CyclePhase[];
-	notes: string;
+	values: {
+		name: string;
+		category: IngredientCategory | null;
+		unit: Unit | null;
+		beneficialPhases: CyclePhase[];
+		notes: string;
+	};
+	validation: {
+		required: {
+			name: boolean;
+			category: boolean;
+			unit: boolean;
+			beneficialPhases: boolean;
+			notes: boolean;
+		};
+	};
+	errors: {
+		name?: string;
+		category?: string;
+		unit?: string;
+		beneficialPhases?: string;
+		notes?: string;
+	};
 }
 
 export interface MealIngredient {

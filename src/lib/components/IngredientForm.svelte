@@ -9,17 +9,27 @@
 	let dialog: FormDialog;
 	let mode = $state<FormMode>({ editing: false });
 
-	let formData = $state({ ...DEFAULT_INGREDIENT_FORM });
-	let formErrors = $state<Record<string, string>>({});
+	let formInformation = $state({ ...DEFAULT_INGREDIENT_FORM });
+
+	function updateFormValidation(
+		validation: 'required',
+		property: keyof (typeof formInformation)['validation']['required'],
+		value: boolean
+	) {
+		formInformation.validation[validation][property] = value;
+	}
+
+	function updateFormValue() {}
+
+	function updateFormErrors() {}
 
 	export function open(ingredient?: Ingredient) {
 		mode = ingredient ? { editing: true, ingredient } : { editing: false };
 
-		formData = mode.editing
+		formInformation.values = mode.editing
 			? { ...mode.ingredient, notes: mode.ingredient.notes ?? '' }
-			: { ...DEFAULT_INGREDIENT_FORM };
+			: { ...DEFAULT_INGREDIENT_FORM.values };
 
-		formErrors = {};
 		dialog.open();
 	}
 
@@ -32,6 +42,14 @@
 		formErrors = next;
 		return Object.keys(next).length === 0;
 	}
+
+	function validateForm(): boolean {}
+
+	function resetForm() {
+		formInformation = { ...DEFAULT_INGREDIENT_FORM };
+	}
+
+	function handleFormSubmit() {}
 
 	function handleSubmit() {
 		if (!validate()) return;
