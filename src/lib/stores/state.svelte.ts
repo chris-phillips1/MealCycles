@@ -9,23 +9,25 @@ import type {
 	MealType
 } from '$lib/types';
 
-class AppState {
-	appData = loadAppData();
+const appData = loadAppData();
 
-	cycle = $state(this.appData.cycle);
-	ingredients = $state(this.appData.ingredients);
-	meals = $state(this.appData.meals);
-	mealPlans = $state(this.appData.mealPlans);
-	config = $state(this.appData.config);
+class AppState {
+	cycle = $state(appData.cycle);
+	ingredients = $state(appData.ingredients);
+	meals = $state(appData.meals);
+	mealPlans = $state(appData.mealPlans);
+	config = $state(appData.config);
 
 	constructor() {
-		$effect(() => {
-			saveAppData({
-				cycle: this.cycle,
-				ingredients: this.ingredients,
-				meals: this.meals,
-				mealPlans: this.mealPlans,
-				config: this.config
+		$effect.root(() => {
+			$effect(() => {
+				saveAppData({
+					cycle: this.cycle,
+					ingredients: this.ingredients,
+					meals: this.meals,
+					mealPlans: this.mealPlans,
+					config: this.config
+				});
 			});
 		});
 	}
