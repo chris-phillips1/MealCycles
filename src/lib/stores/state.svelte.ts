@@ -105,7 +105,7 @@ class AppState {
 	}
 
 	getMealsByType(types: MealType[]) {
-		return this.meals.filter((meal) => types.some((type) => meal.tags.includes(type)));
+		return this.meals.filter((meal) => types.some((type) => meal.mealTypes.includes(type)));
 	}
 
 	addMealPlan(mealPlan: Omit<MealPlan, 'id'>) {
@@ -126,11 +126,8 @@ class AppState {
 		this.mealPlans = this.mealPlans.filter((plan) => plan.id !== id);
 	}
 
-	getMealPlans(activeOnly: boolean = true) {
-		if (activeOnly) {
-			return this.mealPlans.filter((plan) => !plan.isArchived);
-		}
-		return this.mealPlans.filter((plan) => plan.isArchived);
+	getActiveMealPlans() {
+		return this.mealPlans.filter((plan) => !plan.isArchived);
 	}
 
 	getMealPlanById(id: string) {

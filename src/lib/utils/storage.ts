@@ -79,36 +79,4 @@ export function loadAppData(): AppData {
 	}
 }
 
-function clearAppData(): void {
-	if (!browser) {
-		return;
-	}
-
-	try {
-		localStorage.removeItem(STORAGE_KEY);
-	} catch (error) {
-		console.error('Application data could not be cleared from localStorage:', error);
-	}
-}
-
-function exportAppData(): string {
-	const data = loadAppData();
-	return JSON.stringify(data, null, 2);
-}
-
-function importAppData(jsonImport: string): boolean {
-	try {
-		const data = JSON.parse(jsonImport);
-
-		if (!isValidAppData(data)) {
-			console.error('Invalid application data was provided for import');
-			return false;
-		}
-
-		saveAppData(data);
-		return true;
-	} catch (error) {
-		console.error('Issue importing application data: ', error);
-		return false;
-	}
-}
+//TODO: Implement export/import/clear app data functions for user data management

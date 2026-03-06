@@ -70,7 +70,7 @@ export interface Meal {
 	description: string;
 	ingredients: MealIngredient[];
 	beneficialPhases: CyclePhase[];
-	tags: MealType[];
+	mealTypes: MealType[];
 	prepTime: number;
 	cookTime: number;
 	instructions: string;
