@@ -65,6 +65,14 @@ export interface IngredientFilters {
 	phases: CyclePhase[];
 }
 
+export interface IngredientForm {
+	name: string;
+	category: IngredientCategory | null;
+	unit: Unit | null;
+	beneficialPhases: CyclePhase[];
+	notes: string;
+}
+
 export interface MealIngredient {
 	ingredientId: string;
 	quantity: number;
