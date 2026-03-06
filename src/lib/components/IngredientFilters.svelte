@@ -17,14 +17,20 @@
 	onToggle: (v: T) => void
 )}
 	<div class="filter-group">
-		<span>{label}:</span>
-		{#each values as value (value)}
-			<button class:active={active.includes(value)} onclick={() => onToggle(value)}>{value}</button>
-		{/each}
+		<span class="filter-label">{label}:</span>
+		<div class="filter-buttons">
+			{#each values as value (value)}
+				<button
+					class="filter-btn"
+					class:active={active.includes(value)}
+					onclick={() => onToggle(value)}>{value}</button
+				>
+			{/each}
+		</div>
 	</div>
 {/snippet}
 
-<section>
+<section class="filters">
 	{@render filterGroup(
 		'Category',
 		Object.values(IngredientCategory),
@@ -46,8 +52,10 @@
 </section>
 
 <style>
-	section {
+	.filters {
 		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
 		padding: 1.5rem;
 		background: var(--bg-surface);
 		border: 1px solid var(--border);
@@ -56,21 +64,34 @@
 
 	.filter-group {
 		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.filter-buttons {
+		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-		max-width: 40vw;
 	}
 
-	.filter-group span {
-		flex-basis: 100%;
+	.filter-label {
+		display: block;
+		font-weight: 600;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
-	.filter-group button:hover:not(.active) {
+	.filter-btn {
+		text-transform: capitalize;
+	}
+
+	.filter-btn:hover:not(.active) {
 		background: var(--bg-surface);
 		transform: translateY(-1px);
 	}
 
-	.filter-group button.active {
+	.filter-btn.active {
 		background: var(--accent);
 		color: white;
 		border-color: var(--accent);
@@ -84,11 +105,7 @@
 		margin-left: auto;
 	}
 
-	.filter-actions button {
-		white-space: nowrap;
-	}
-
-	input[type='search'] {
+	.filter-actions input {
 		min-width: 200px;
 		padding: 0.5rem 1rem;
 	}
