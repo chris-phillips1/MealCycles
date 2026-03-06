@@ -1,18 +1,7 @@
 <script lang="ts">
 	import { CyclePhase, IngredientCategory } from '$lib/types';
+	import { toggleArrayItem } from '$lib/utils/array';
 	let { filters = $bindable() } = $props();
-
-	function toggleCategory(category: IngredientCategory) {
-		filters.categories = filters.categories.includes(category)
-			? filters.categories.filter((c: IngredientCategory) => c !== category)
-			: [...filters.categories, category];
-	}
-
-	function togglePhase(phase: CyclePhase) {
-		filters.phases = filters.phases.includes(phase)
-			? filters.phases.filter((p: CyclePhase) => p !== phase)
-			: [...filters.phases, phase];
-	}
 
 	function clearFilters() {
 		filters = { search: '', categories: [], phases: [] };
@@ -20,31 +9,39 @@
 </script>
 
 <section class="filters">
-	<article class="filter">
-		<p>Category:</p>
-		<div class="filter-choices">
-			{#each Object.values(IngredientCategory) as category (category)}
-				<button
-					class:active={filters.categories.includes(category)}
-					class="capitalize"
-					onclick={() => toggleCategory(category)}>{category}</button
-				>
-			{/each}
-		</div>
-	</article>
+	{#snippet filterGroup<T extends string>(
+		label: string,
+		values: T[],
+		active: T[],
+		onToggle: (v: T) => void
+	)}
+		<article class="filter">
+			<p>{label}:</p>
+			<div class="filter-choices">
+				{#each values as value (value)}
+					<button
+						class:active={active.includes(value)}
+						class="capitalize"
+						onclick={() => onToggle(value)}>{value}</button
+					>
+				{/each}
+			</div>
+		</article>
+	{/snippet}
 
-	<article class="filter">
-		<p>Phase:</p>
-		<div class="filter-choices">
-			{#each Object.values(CyclePhase) as phase (phase)}
-				<button
-					class:active={filters.phases.includes(phase)}
-					class="capitalize"
-					onclick={() => togglePhase(phase)}>{phase}</button
-				>
-			{/each}
-		</div>
-	</article>
+	{@render filterGroup(
+		'Category',
+		Object.values(IngredientCategory),
+		filters.categories,
+		(v: IngredientCategory) => (filters.categories = toggleArrayItem(filters.categories, v))
+	)}
+
+	{@render filterGroup(
+		'Phase',
+		Object.values(CyclePhase),
+		filters.phases,
+		(v: CyclePhase) => (filters.phases = toggleArrayItem(filters.phases, v))
+	)}
 
 	<article class="filter-actions">
 		<button onclick={clearFilters}>Clear Filters</button>
