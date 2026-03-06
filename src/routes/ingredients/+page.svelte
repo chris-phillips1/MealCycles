@@ -4,11 +4,11 @@
 	import IngredientFilters from '$lib/components/IngredientFilters.svelte';
 	import { DEFAULT_INGREDIENT_FILTERS } from '$lib/constants';
 	import IngredientForm from '$lib/components/IngredientForm.svelte';
-	import BasicDialog from '$lib/components/BasicDialog.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	// ========== DIALOGS ==========
 	let form: IngredientForm;
-	let confirm: BasicDialog;
+	let confirm: ConfirmDialog;
 
 	let filters = $state({ ...DEFAULT_INGREDIENT_FILTERS });
 
@@ -51,12 +51,13 @@
 	onDelete={confirmDelete}
 /> -->
 <IngredientForm bind:this={form} />
-<BasicDialog
+<ConfirmDialog
 	bind:this={confirm}
 	title="Delete Ingredient"
-	message="Are you sure you want to delete this ingredient?"
-	cancelDetails={{ label: 'Cancel' }}
-	confirmDetails={{ label: 'Delete', onConfirm: deleteIngredient }}
+	message="Are you sure? This cannot be undone."
+	variant="danger"
+	confirmLabel="Delete"
+	onConfirm={deleteIngredient}
 />
 
 <!-- Table -->
