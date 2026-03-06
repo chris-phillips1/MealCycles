@@ -59,6 +59,12 @@ export interface Ingredient {
 	notes?: string;
 }
 
+export interface IngredientFilters {
+	search: string;
+	categories: IngredientCategory[];
+	phases: CyclePhase[];
+}
+
 export interface MealIngredient {
 	ingredientId: string;
 	quantity: number;

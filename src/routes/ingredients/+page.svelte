@@ -3,17 +3,14 @@
 	import { CyclePhase, IngredientCategory, Unit, type Ingredient } from '$lib/types';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import IngredientFilters from '$lib/components/IngredientFilters.svelte';
+	import { DEFAULT_INGREDIENT_FILTERS } from '$lib/constants';
 
 	// ========== DIALOGS ==========
 	let formDialog: HTMLDialogElement;
 	let confirmDialog: ConfirmDialog;
 
 	// ========== FILTERS ==========
-	let filters = $state({
-		search: '',
-		categories: [] as IngredientCategory[],
-		phases: [] as CyclePhase[]
-	});
+	let filters = $state({ ...DEFAULT_INGREDIENT_FILTERS });
 
 	let filteredIngredients = $derived.by(() => {
 		return appState.ingredients
