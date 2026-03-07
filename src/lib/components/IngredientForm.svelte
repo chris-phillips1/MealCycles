@@ -8,22 +8,22 @@
 
 	let dialog: FormDialog;
 	let mode = $state<FormMode>({ editing: false });
-
 	let formInformation = $state(createDefaultIngredientForm());
 
 	export function open(ingredient?: Ingredient) {
 		resetForm();
 		mode = ingredient ? { editing: true, ingredient } : { editing: false };
 
-		formInformation.values = mode.editing
-			? { ...mode.ingredient, notes: mode.ingredient.notes ?? '' }
-			: { ...createDefaultIngredientForm().values };
+		if (mode.editing) {
+			const { name, category, unit, beneficialPhases, notes } = mode.ingredient;
+			formInformation.values = { name, category, unit, beneficialPhases, notes: notes ?? '' };
+		}
 
 		dialog.open();
 	}
 
 	function resetForm() {
-		formInformation = { ...createDefaultIngredientForm() };
+		formInformation = createDefaultIngredientForm();
 	}
 
 	function validateForm(): boolean {

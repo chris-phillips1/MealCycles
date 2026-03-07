@@ -7,7 +7,6 @@
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import IngredientTable from '$lib/components/IngredientTable.svelte';
 
-	// ========== DIALOGS ==========
 	let form: IngredientForm;
 	let confirm: ConfirmDialog;
 
@@ -24,22 +23,14 @@
 			);
 	});
 
-	// ========== DELETE ==========
 	let deletingIngredient = $state<Ingredient | null>(null);
 
 	function confirmDelete(ingredient: Ingredient) {
 		deletingIngredient = ingredient;
 		confirm.open();
 	}
-
-	function deleteIngredient() {
-		if (deletingIngredient) {
-			appState.removeIngredient(deletingIngredient.id);
-		}
-	}
 </script>
 
-<!-- Header -->
 <header>
 	<h1>Ingredients</h1>
 	<button onclick={() => form.open()}>Add Ingredient</button>
@@ -49,7 +40,7 @@
 <IngredientTable
 	ingredients={filteredIngredients}
 	isFiltered={!!(filters.search || filters.categories.length || filters.phases.length)}
-	onEdit={(ingredient: Ingredient) => form.open(ingredient)}
+	onEdit={(ingredient) => form.open(ingredient)}
 	onDelete={confirmDelete}
 />
 <IngredientForm bind:this={form} />
@@ -59,7 +50,7 @@
 	message="Are you sure? This cannot be undone."
 	variant="danger"
 	confirmLabel="Delete"
-	onConfirm={deleteIngredient}
+	onConfirm={() => deletingIngredient && appState.removeIngredient(deletingIngredient.id)}
 />
 
 <style>
