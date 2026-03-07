@@ -44,7 +44,7 @@
 			category: formInformation.values.category!,
 			unit: formInformation.values.unit!,
 			beneficialPhases: formInformation.values.beneficialPhases,
-			notes: formInformation.values.notes.trim()
+			notes: formInformation.values.notes?.trim()
 		};
 
 		if (mode.editing) {
