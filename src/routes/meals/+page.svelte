@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
+	import MealForm from '$lib/components/MealForm.svelte';
 	import { appState } from '$lib/stores/state.svelte';
+
+	let form: MealForm;
 </script>
 
 <header>
 	<h1>Meals</h1>
-	<button>Add Meal</button>
+	<button onclick={() => form.open()}>Add Meal</button>
 </header>
 
 <section class="meal-list">
@@ -18,7 +21,7 @@
 			</div>
 			<div class="meal-card-subheading">
 				<span>Prep Time: {meal.prepTime} min</span>
-				<span>---</span>
+				<span>--</span>
 				<span>Cook Time: {meal.cookTime} min</span>
 			</div>
 			<div class="meal-card-body">
@@ -30,6 +33,8 @@
 		<p>No meals found.</p>
 	{/each}
 </section>
+
+<MealForm bind:this={form} />
 
 <style>
 	header {
