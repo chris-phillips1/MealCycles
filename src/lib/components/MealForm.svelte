@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, MealType, type Meal } from '$lib/types';
+	import ButtonSelector from './ButtonSelector.svelte';
 	import FormDialog from './FormDialog.svelte';
 
 	let dialog: FormDialog;
@@ -37,17 +38,17 @@
 		<input type="text" value={formData.name} name="name" placeholder="Meal Name" />
 		<input type="text" value={formData.description} name="description" placeholder="Description" />
 
-		<select bind:value={formData.beneficialPhases} multiple>
-			{#each Object.values(CyclePhase) as phase (phase)}
-				<option value={phase}>{phase}</option>
-			{/each}
-		</select>
+		<ButtonSelector
+			label="Phase"
+			buttonOptions={Object.values(CyclePhase)}
+			bind:selectedButtons={formData.beneficialPhases}
+		/>
 
-		<select bind:value={formData.mealTypes} multiple>
-			{#each Object.values(MealType) as type (type)}
-				<option value={type}>{type}</option>
-			{/each}
-		</select>
+		<ButtonSelector
+			label="Type"
+			buttonOptions={Object.values(MealType)}
+			bind:selectedButtons={formData.mealTypes}
+		/>
 
 		<input type="number" value={formData.prepTime} name="prepTime" />
 		<input type="number" value={formData.cookTime} name="cookTime" />

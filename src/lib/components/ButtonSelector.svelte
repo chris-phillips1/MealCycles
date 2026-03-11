@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { toggleArrayItem } from '$lib/utils/array';
-	let { buttonOptions, selectedButtons = $bindable() } = $props();
+	let { label, buttonOptions, selectedButtons = $bindable() } = $props();
 </script>
 
 <section class="selector-group">
-	<span class="selector-label">Category:</span>
+	<span class="selector-label">{label}</span>
 	<div class="selector-buttons">
 		{#each buttonOptions as buttonOption (buttonOption)}
 			<button
 				class="selector-button"
 				class:active={selectedButtons.includes(buttonOption)}
-				onclick={() => (selectedButtons = toggleArrayItem(selectedButtons, buttonOption))}
-				>{buttonOption}</button
+				onclick={(e) => {
+					e.preventDefault();
+					selectedButtons = toggleArrayItem(selectedButtons, buttonOption);
+				}}>{buttonOption}</button
 			>
 		{/each}
 	</div>

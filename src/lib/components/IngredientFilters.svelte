@@ -12,11 +12,16 @@
 
 <section class="filters">
 	<ButtonSelector
+		label="Category"
 		buttonOptions={Object.values(IngredientCategory)}
 		bind:selectedButtons={filters.categories}
 	/>
 
-	<ButtonSelector buttonOptions={Object.values(CyclePhase)} bind:selectedButtons={filters.phases} />
+	<ButtonSelector
+		label="Phase"
+		buttonOptions={Object.values(CyclePhase)}
+		bind:selectedButtons={filters.phases}
+	/>
 
 	<div class="filter-actions">
 		<button onclick={resetFilters}>Clear Filters</button>
