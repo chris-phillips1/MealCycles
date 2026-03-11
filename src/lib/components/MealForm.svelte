@@ -9,7 +9,7 @@
 	let formData = $state({
 		name: '',
 		description: '',
-		mealIngredients: {} as Record<string, { quantity: number }>,
+		mealIngredients: {} as Record<string, number>,
 		beneficialPhases: [] as CyclePhase[],
 		mealTypes: [] as MealType[],
 		prepTime: 0,
@@ -36,22 +36,6 @@
 	>
 		<input type="text" value={formData.name} name="name" placeholder="Meal Name" />
 		<input type="text" value={formData.description} name="description" placeholder="Description" />
-
-		<select name="" id="" bind:value={selectedIngredients} multiple>
-			{#each appState.ingredients as ingredient (ingredient)}
-				<option value={ingredient.id}>{ingredient.name}</option>
-			{/each}
-		</select>
-
-		<div>
-			{#if selectedIngredients && selectedIngredients.length > 0}
-				{#each selectedIngredients as ingredientId (ingredientId)}
-					<input type="text" value={appState.getIngredientById(ingredientId)?.name} />
-					<input type="number" bind:value={formData.mealIngredients[ingredientId].quantity} />
-					<input type="text" disabled />
-				{/each}
-			{/if}
-		</div>
 
 		<select bind:value={formData.beneficialPhases} multiple>
 			{#each Object.values(CyclePhase) as phase (phase)}
