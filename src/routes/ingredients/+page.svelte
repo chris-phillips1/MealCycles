@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { appState } from '$lib/stores/state.svelte';
-	import { type Ingredient } from '$lib/types';
-	import IngredientFilters from '$lib/components/IngredientFilters.svelte';
 	import { DEFAULT_INGREDIENT_FILTERS } from '$lib/constants';
-	import IngredientForm from '$lib/components/IngredientForm.svelte';
+	import { type Ingredient } from '$lib/types';
+	import { appState } from '$lib/stores/state.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
-	import IngredientTable from '$lib/components/IngredientTable.svelte';
+	import IngredientFilters from '$lib/components/ingredientComponents/IngredientFilters.svelte';
+	import IngredientForm from '$lib/components/ingredientComponents/IngredientForm.svelte';
+	import IngredientTable from '$lib/components/ingredientComponents/IngredientTable.svelte';
 
 	let form: IngredientForm;
 	let confirm: ConfirmDialog;

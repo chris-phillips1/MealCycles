@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CyclePhase, MealType, type Meal } from '$lib/types';
-	import ButtonSelector from './ButtonSelector.svelte';
-	import FormDialog from './FormDialog.svelte';
+	import ButtonSelector from '../ButtonSelector.svelte';
+	import FormDialog from '../FormDialog.svelte';
 
 	let dialog: FormDialog;
 	let editData = $state({ isEdit: false, meal: null as Meal | null });
