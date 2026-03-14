@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import type { AppData } from '$lib/types';
-import { ingredients } from './sampleData';
+import { ingredients, meals } from './sampleData';
 
 const STORAGE_KEY = 'MealCycles';
 
@@ -17,7 +17,7 @@ function getDefaultAppData(): AppData {
 			}
 		},
 		ingredients: ingredients,
-		meals: [],
+		meals: meals,
 		mealPlans: [],
 		config: {
 			theme: 'dark'
