@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MealForm from '$lib/components/MealForm.svelte';
+	import MealForm from '$lib/components/mealComponents/MealForm.svelte';
 	import { appState } from '$lib/stores/state.svelte';
 
 	let form: MealForm;

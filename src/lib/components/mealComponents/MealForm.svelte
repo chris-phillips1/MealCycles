@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, MealType, type Meal } from '$lib/types';
-	import ButtonSelector from '../ButtonSelector.svelte';
-	import FormDialog from '../FormDialog.svelte';
+	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
+	import FormDialog from '$lib/components/FormDialog.svelte';
+	import MultiSelect from '$lib/components/MultiSelect.svelte';
 
+	let options = appState.ingredients.map((ingredient) => ingredient.name);
 	let dialog: FormDialog;
 	let editData = $state({ isEdit: false, meal: null as Meal | null });
 	let formData = $state({
@@ -35,6 +38,8 @@
 	>
 		<input type="text" value={formData.name} name="name" placeholder="Meal Name" />
 		<input type="text" value={formData.description} name="description" placeholder="Description" />
+
+		<MultiSelect {options} />
 
 		<ButtonSelector
 			label="Phase"
