@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, MealType, type Meal } from '$lib/types';
 	import ButtonSelector from './ButtonSelector.svelte';
 	import FormDialog from './FormDialog.svelte';
 
 	let dialog: FormDialog;
-	let selectedIngredients = $state([] as string[]);
 	let editData = $state({ isEdit: false, meal: null as Meal | null });
 	let formData = $state({
 		name: '',

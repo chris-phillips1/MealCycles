@@ -1,4 +1,4 @@
-import type { Ingredient, IngredientCategory, Unit } from './types';
+import type { Ingredient, IngredientCategory, Meal, Unit } from './types';
 
 export interface IngredientForm {
 	values: Omit<Ingredient, 'id'> & {
@@ -11,5 +11,19 @@ export interface IngredientForm {
 		unit?: string;
 		beneficialPhases?: string;
 		notes?: string;
+	};
+}
+
+export interface MealForm {
+	values: Omit<Meal, 'id'>;
+	errors: {
+		name?: string;
+		description?: string;
+		ingredients?: string;
+		beneficialPhases?: string;
+		mealTypes?: string;
+		prepTime?: string;
+		cookTime?: string;
+		instructions?: string;
 	};
 }
