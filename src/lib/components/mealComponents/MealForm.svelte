@@ -57,7 +57,9 @@
 			<tbody>
 				{#each selectedIngredients as ingredient (ingredient.value)}
 					<tr>
-						<td class="quantity-input"><input type="number" /></td>
+						<td class="quantity-input"
+							><input type="number" bind:value={formData.mealIngredients[ingredient.value]} /></td
+						>
 						<td><span class="ingredient-label">{ingredient.label}</span></td>
 						<td
 							><button
