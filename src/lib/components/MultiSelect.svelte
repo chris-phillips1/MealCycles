@@ -18,9 +18,7 @@
 		options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase()))
 	);
 
-	type Option = (typeof options)[number];
-
-	function isSelected(option: Option) {
+	function isSelected(option: { label: string; value: string }) {
 		return selected.includes(option.value);
 	}
 </script>

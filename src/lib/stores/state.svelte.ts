@@ -31,20 +31,6 @@ class AppState {
 		};
 	}
 
-	updateIngredient(id: string, updates: Partial<Omit<Ingredient, 'id'>>) {
-		store.value = {
-			...store.value,
-			ingredients: store.value.ingredients.map((i) => (i.id === id ? { ...i, ...updates } : i))
-		};
-	}
-
-	removeIngredient(id: string) {
-		store.value = {
-			...store.value,
-			ingredients: store.value.ingredients.filter((i) => i.id !== id)
-		};
-	}
-
 	// Recipes
 	addRecipe(recipe: Omit<Recipe, 'id'>) {
 		store.value = {
