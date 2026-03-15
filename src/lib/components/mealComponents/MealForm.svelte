@@ -62,8 +62,9 @@
 			bind:selectedButtons={formData.mealTypes}
 		/>
 
-		<input type="number" value={formData.prepTime} name="prepTime" />
-		<input type="number" value={formData.cookTime} name="cookTime" />
+		<label>Prep Time: <input type="number" value={formData.prepTime} name="prepTime" /></label>
+		<label>Cook Time: <input type="number" value={formData.cookTime} name="cookTime" /></label>
+
 		<input
 			type="text"
 			value={formData.instructions}
