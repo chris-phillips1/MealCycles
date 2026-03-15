@@ -1,11 +1,16 @@
 <script lang="ts">
-	import { appState } from '$lib/stores/state.svelte';
 	import { CyclePhase, MealType, type Meal } from '$lib/types';
+	import { appState } from '$lib/stores/state.svelte';
 	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
 	import FormDialog from '$lib/components/FormDialog.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 
-	let options = appState.ingredients.map((ingredient) => ingredient.name);
+	let ingredientOptions = appState.ingredients.map((ingredient) => ({
+		label: ingredient.name,
+		value: ingredient.id
+	}));
+	let selectedIngredients = $state([]);
+
 	let dialog: FormDialog;
 	let editData = $state({ isEdit: false, meal: null as Meal | null });
 	let formData = $state({
@@ -39,7 +44,11 @@
 		<input type="text" value={formData.name} name="name" placeholder="Meal Name" />
 		<input type="text" value={formData.description} name="description" placeholder="Description" />
 
-		<MultiSelect {options} />
+		<MultiSelect
+			placeholder="Ingredients"
+			options={ingredientOptions}
+			bind:selected={selectedIngredients}
+		/>
 
 		<ButtonSelector
 			label="Phase"
