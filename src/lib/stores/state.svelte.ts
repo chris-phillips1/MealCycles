@@ -1,172 +1,97 @@
-import { loadAppData, saveAppData } from '$lib/utils/storage';
-import type {
-	Cycle,
-	Ingredient,
-	Meal,
-	MealPlan,
-	IngredientCategory,
-	CyclePhase,
-	MealType
-} from '$lib/types';
+import type { AppData, CyclePhase, Ingredient, Recipe } from '$lib/types';
+import { persisted } from '$lib/utils/storage.svelte';
+import { sampleIngredients, sampleRecipes } from '$lib/utils/sampleData';
 
-const appData = loadAppData();
+const STORAGE_KEY = 'MealCycles';
+
+const defaultAppData: AppData = {
+	ingredients: sampleIngredients,
+	recipes: sampleRecipes,
+	plan: { phase: 'menstrual', recipeIds: [] }
+};
+
+const store = persisted<AppData>(STORAGE_KEY, defaultAppData);
 
 class AppState {
-	cycle = $state(appData.cycle);
-	ingredients = $state(appData.ingredients);
-	meals = $state(appData.meals);
-	mealPlans = $state(appData.mealPlans);
-	config = $state(appData.config);
-
-	constructor() {
-		$effect.root(() => {
-			$effect(() => {
-				saveAppData({
-					cycle: this.cycle,
-					ingredients: this.ingredients,
-					meals: this.meals,
-					mealPlans: this.mealPlans,
-					config: this.config
-				});
-			});
-		});
+	get ingredients() {
+		return store.value.ingredients;
+	}
+	get recipes() {
+		return store.value.recipes;
+	}
+	get plan() {
+		return store.value.plan;
 	}
 
-	updateConfig(updates: Partial<typeof this.config>) {
-		this.config = { ...this.config, ...updates };
-	}
-
-	updateCycle(updates: Partial<Cycle>) {
-		this.cycle = { ...this.cycle, ...updates };
-	}
-
+	// Ingredients
 	addIngredient(ingredient: Omit<Ingredient, 'id'>) {
-		const newIngredient: Ingredient = {
-			...ingredient,
-			id: crypto.randomUUID()
+		store.value = {
+			...store.value,
+			ingredients: [...store.value.ingredients, { ...ingredient, id: crypto.randomUUID() }]
 		};
-		this.ingredients = [...this.ingredients, newIngredient];
 	}
 
 	updateIngredient(id: string, updates: Partial<Omit<Ingredient, 'id'>>) {
-		this.ingredients = this.ingredients.map((ingredient) =>
-			ingredient.id === id ? { ...ingredient, ...updates } : ingredient
-		);
+		store.value = {
+			...store.value,
+			ingredients: store.value.ingredients.map((i) => (i.id === id ? { ...i, ...updates } : i))
+		};
 	}
 
 	removeIngredient(id: string) {
-		this.ingredients = this.ingredients.filter((ingredient) => ingredient.id !== id);
-	}
-
-	getIngredientById(id: string) {
-		return this.ingredients.find((ingredient) => ingredient.id === id);
-	}
-
-	getIngredientByName(name: string) {
-		return this.ingredients.find(
-			(ingredient) => ingredient.name.toLowerCase() === name.toLowerCase()
-		);
-	}
-
-	getIngredientsByCategory(category: IngredientCategory) {
-		return this.ingredients.filter((ingredient) => ingredient.category === category);
-	}
-
-	getIngredientsByPhase(phases: CyclePhase[]) {
-		return this.ingredients.filter((ingredient) =>
-			phases.some((phase) => ingredient.beneficialPhases.includes(phase))
-		);
-	}
-
-	addMeal(meal: Omit<Meal, 'id'>) {
-		const newMeal: Meal = {
-			...meal,
-			id: crypto.randomUUID()
+		store.value = {
+			...store.value,
+			ingredients: store.value.ingredients.filter((i) => i.id !== id)
 		};
-		this.meals = [...this.meals, newMeal];
 	}
 
-	updateMeal(id: string, updates: Partial<Omit<Meal, 'id'>>) {
-		this.meals = this.meals.map((meal) => (meal.id === id ? { ...meal, ...updates } : meal));
-	}
-
-	removeMeal(id: string) {
-		this.meals = this.meals.filter((meal) => meal.id !== id);
-	}
-
-	getMealById(id: string) {
-		return this.meals.find((meal) => meal.id === id);
-	}
-
-	getMealsByPhase(phases: CyclePhase[]) {
-		return this.meals.filter((meal) =>
-			phases.some((phase) => meal.beneficialPhases.includes(phase))
-		);
-	}
-
-	getMealsByType(types: MealType[]) {
-		return this.meals.filter((meal) => types.some((type) => meal.mealTypes.includes(type)));
-	}
-
-	addMealPlan(mealPlan: Omit<MealPlan, 'id'>) {
-		const newMealPlan: MealPlan = {
-			...mealPlan,
-			id: crypto.randomUUID()
+	// Recipes
+	addRecipe(recipe: Omit<Recipe, 'id'>) {
+		store.value = {
+			...store.value,
+			recipes: [...store.value.recipes, { ...recipe, id: crypto.randomUUID() }]
 		};
-		this.mealPlans = [...this.mealPlans, newMealPlan];
 	}
 
-	updateMealPlan(id: string, updates: Partial<Omit<MealPlan, 'id'>>) {
-		this.mealPlans = this.mealPlans.map((plan) =>
-			plan.id === id ? { ...plan, ...updates } : plan
-		);
+	updateRecipe(id: string, updates: Partial<Omit<Recipe, 'id'>>) {
+		store.value = {
+			...store.value,
+			recipes: store.value.recipes.map((r) => (r.id === id ? { ...r, ...updates } : r))
+		};
 	}
 
-	removeMealPlan(id: string) {
-		this.mealPlans = this.mealPlans.filter((plan) => plan.id !== id);
+	removeRecipe(id: string) {
+		store.value = {
+			...store.value,
+			recipes: store.value.recipes.filter((r) => r.id !== id),
+			plan: {
+				...store.value.plan,
+				recipeIds: store.value.plan.recipeIds.filter((rid) => rid !== id)
+			}
+		};
 	}
 
-	getActiveMealPlans() {
-		return this.mealPlans.filter((plan) => !plan.isArchived);
+	// Plan
+	startNewPlan(phase: CyclePhase) {
+		store.value = { ...store.value, plan: { phase, recipeIds: [] } };
 	}
 
-	getMealPlanById(id: string) {
-		return this.mealPlans.find((plan) => plan.id === id);
+	addRecipeToPlan(recipeId: string) {
+		if (store.value.plan.recipeIds.includes(recipeId)) return;
+		store.value = {
+			...store.value,
+			plan: { ...store.value.plan, recipeIds: [...store.value.plan.recipeIds, recipeId] }
+		};
 	}
 
-	archiveMealPlan(id: string, archive: boolean) {
-		this.updateMealPlan(id, { isArchived: archive });
-	}
-
-	addUnscheduledMeal(planId: string, mealId: string) {
-		const plan = this.getMealPlanById(planId);
-		if (!plan) return;
-
-		this.updateMealPlan(planId, {
-			unscheduledMeals: [...plan.unscheduledMeals, mealId]
-		});
-	}
-
-	scheduleMeal(planId: string, mealId: string, date: string, mealType: MealType) {
-		const plan = this.getMealPlanById(planId);
-		if (!plan) return;
-
-		this.updateMealPlan(planId, {
-			unscheduledMeals: plan.unscheduledMeals.filter((id) => id !== mealId),
-			scheduledMeals: [...plan.scheduledMeals, { mealId, date, mealType }]
-		});
-	}
-
-	unscheduleMeal(planId: string, mealId: string, date: string, mealType: MealType) {
-		const plan = this.getMealPlanById(planId);
-		if (!plan) return;
-
-		this.updateMealPlan(planId, {
-			scheduledMeals: plan.scheduledMeals.filter(
-				(sm) => !(sm.mealId === mealId && sm.date === date && sm.mealType === mealType)
-			),
-			unscheduledMeals: [...plan.unscheduledMeals, mealId]
-		});
+	removeRecipeFromPlan(recipeId: string) {
+		store.value = {
+			...store.value,
+			plan: {
+				...store.value.plan,
+				recipeIds: store.value.plan.recipeIds.filter((id) => id !== recipeId)
+			}
+		};
 	}
 }
 

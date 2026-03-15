@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { toggleArrayItem } from '$lib/utils/array';
+
 	let {
 		placeholder = 'Select',
 		options = [],
@@ -6,7 +8,7 @@
 	}: {
 		placeholder: string;
 		options: { label: string; value: string }[];
-		selected: typeof options;
+		selected: string[];
 	} = $props();
 
 	let open = $state(false);
@@ -19,13 +21,7 @@
 	type Option = (typeof options)[number];
 
 	function isSelected(option: Option) {
-		return selected.some((s) => s.value === option.value);
-	}
-
-	function toggle(option: Option) {
-		selected = isSelected(option)
-			? selected.filter((s) => s.value !== option.value)
-			: [...selected, option];
+		return selected.includes(option.value);
 	}
 </script>
 
@@ -54,7 +50,10 @@
 		<ul class="dropdown" role="listbox" onmousedown={(e) => e.preventDefault()}>
 			{#each filteredOptions as option (option.value)}
 				<li role="option" aria-selected={isSelected(option)}>
-					<button type="button" onclick={() => toggle(option)}>
+					<button
+						type="button"
+						onclick={() => (selected = toggleArrayItem(selected, option.value))}
+					>
 						<span class="checkbox">
 							{#if isSelected(option)}✓{/if}
 						</span>

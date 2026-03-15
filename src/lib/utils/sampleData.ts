@@ -1,66 +1,62 @@
-import { CyclePhase, IngredientCategory, MealType, Unit } from '../types';
-import type { Ingredient, Meal } from '../types';
+import type { Ingredient, Recipe } from '$lib/types';
 
-export const ingredients: Ingredient[] = [
+export const sampleIngredients: Ingredient[] = [
 	{
 		id: '1',
-		name: 'Apple',
-		category: IngredientCategory.FRUIT,
-		unit: Unit.PIECE,
-		beneficialPhases: [CyclePhase.FOLLICULAR, CyclePhase.LUTEAL],
-		notes: 'This is a sample ingredient.'
+		name: 'Spinach',
+		phases: ['menstrual', 'follicular']
 	},
 	{
 		id: '2',
-		name: 'Banana',
-		category: IngredientCategory.FRUIT,
-		unit: Unit.PIECE,
-		beneficialPhases: [CyclePhase.MENSTRUAL, CyclePhase.LUTEAL],
-		notes: 'This is a sample ingredient.'
+		name: 'Salmon',
+		phases: ['menstrual', 'luteal']
 	},
 	{
 		id: '3',
-		name: 'Carrot',
-		category: IngredientCategory.VEGETABLE,
-		unit: Unit.PIECE,
-		beneficialPhases: [CyclePhase.FOLLICULAR, CyclePhase.OVULATION],
-		notes: 'This is a sample ingredient.'
+		name: 'Avocado',
+		phases: ['follicular', 'ovulation']
 	},
 	{
 		id: '4',
-		name: 'Steak',
-		category: IngredientCategory.PROTEIN,
-		unit: Unit.PIECE,
-		beneficialPhases: [CyclePhase.MENSTRUAL],
-		notes: 'A piece of steak'
+		name: 'Sweet Potato',
+		phases: ['luteal']
 	},
 	{
 		id: '5',
-		name: 'Potato',
-		category: IngredientCategory.GRAIN,
-		unit: Unit.PIECE,
-		beneficialPhases: [CyclePhase.FOLLICULAR, CyclePhase.OVULATION],
-		notes: 'A medium-sized potato'
+		name: 'Lentils',
+		phases: ['follicular', 'ovulation', 'luteal']
 	}
 ];
 
-export const meals: Meal[] = [
+export const sampleRecipes: Recipe[] = [
 	{
-		id: '6',
-		name: 'Steak & Potatos',
-		description: 'A timelessly classic dish',
+		id: '10',
+		name: 'Salmon & Spinach Bowl',
+		description: 'A simple iron-rich bowl great for the menstrual phase.',
 		ingredients: [
-			{
-				ingredientId: '4',
-				quantity: 1
-			},
-			{ ingredientId: '5', quantity: 1 }
+			{ ingredientId: '2', quantity: '1 fillet' },
+			{ ingredientId: '1', quantity: '2 cups' }
 		],
-		beneficialPhases: [CyclePhase.MENSTRUAL],
-		mealTypes: [MealType.DINNER],
-		prepTime: 10,
-		cookTime: 35,
-		instructions:
-			'Boil a pot of water. Dice potatos.Add the potatos to the boiling water.Let boil for 35 minutes.Meanwhile, cook the steak to your liking.'
+		phases: ['menstrual']
+	},
+	{
+		id: '11',
+		name: 'Lentil Avocado Salad',
+		description: 'Light and energising — ideal as energy rises in the follicular phase.',
+		ingredients: [
+			{ ingredientId: '5', quantity: '1 cup cooked' },
+			{ ingredientId: '3', quantity: '1/2 avocado' }
+		],
+		phases: ['follicular', 'ovulation']
+	},
+	{
+		id: '12',
+		name: 'Sweet Potato & Lentil Stew',
+		description: 'Warming and grounding for the luteal phase.',
+		ingredients: [
+			{ ingredientId: '4', quantity: '1 medium' },
+			{ ingredientId: '5', quantity: '1 cup cooked' }
+		],
+		phases: ['luteal']
 	}
 ];
