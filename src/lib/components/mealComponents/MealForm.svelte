@@ -4,11 +4,14 @@
 	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
 	import FormDialog from '$lib/components/FormDialog.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
+	import { toggleArrayItem } from '$lib/utils/array';
 
-	let ingredientOptions = appState.ingredients.map((ingredient) => ({
-		label: ingredient.name,
-		value: ingredient.id
-	}));
+	let ingredientOptions = $derived(
+		appState.ingredients.map((ingredient) => ({
+			label: ingredient.name,
+			value: ingredient.id
+		}))
+	);
 	let selectedIngredients = $state([]);
 
 	let dialog: FormDialog;
@@ -49,6 +52,25 @@
 			options={ingredientOptions}
 			bind:selected={selectedIngredients}
 		/>
+
+		<table>
+			<tbody>
+				{#each selectedIngredients as ingredient (ingredient.value)}
+					<tr>
+						<td class="quantity-input"><input type="number" /></td>
+						<td><span class="ingredient-label">{ingredient.label}</span></td>
+						<td
+							><button
+								type="button"
+								onclick={() =>
+									(selectedIngredients = toggleArrayItem(selectedIngredients, ingredient))}
+								>Remove</button
+							></td
+						>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 
 		<ButtonSelector
 			label="Phase"
@@ -99,6 +121,15 @@
 	.form-actions button {
 		padding: 0.6rem 1.25rem;
 		font-weight: 500;
+	}
+
+	.quantity-input,
+	.quantity-input input {
+		width: 50px;
+	}
+
+	.ingredient-label {
+		padding-left: 1rem;
 	}
 
 	.secondary {
