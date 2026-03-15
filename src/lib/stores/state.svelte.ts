@@ -1,13 +1,14 @@
 import type { AppData, CyclePhase, Ingredient, Plan, Recipe } from '$lib/types';
 import { browser } from '$app/environment';
-import { sampleIngredients, sampleRecipes } from '$lib/utils/sampleData';
+import { sampleIngredients, samplePlans, sampleRecipes } from '$lib/utils/sampleData';
 
 const STORAGE_KEY = 'MealCycles';
 
 const defaultAppData: AppData = {
+	cycleStartDate: new Date().toISOString(),
 	ingredients: sampleIngredients,
 	recipes: sampleRecipes,
-	plan: { phase: 'menstrual', recipeIds: [] }
+	plan: samplePlans[0]
 };
 
 function loadFromStorage(): AppData {
@@ -21,6 +22,7 @@ function loadFromStorage(): AppData {
 }
 
 class AppState {
+	cycleStartDate = $state<string>(loadFromStorage().cycleStartDate);
 	ingredients = $state<Ingredient[]>(loadFromStorage().ingredients);
 	recipes = $state<Recipe[]>(loadFromStorage().recipes);
 	plan = $state<Plan>(loadFromStorage().plan);
@@ -32,6 +34,7 @@ class AppState {
 				localStorage.setItem(
 					STORAGE_KEY,
 					JSON.stringify({
+						cycleStartDate: this.cycleStartDate,
 						ingredients: this.ingredients,
 						recipes: this.recipes,
 						plan: this.plan
@@ -39,6 +42,11 @@ class AppState {
 				);
 			});
 		});
+	}
+
+	//Cycle
+	updateCycleStart(date: string) {
+		this.cycleStartDate = date;
 	}
 
 	// Ingredients
@@ -65,7 +73,7 @@ class AppState {
 
 	// Plan
 	startNewPlan(phase: CyclePhase) {
-		this.plan = { phase, recipeIds: [] };
+		this.plan = { phase, recipeIds: [], createdAt: new Date().toISOString() };
 	}
 
 	addRecipeToPlan(recipeId: string) {

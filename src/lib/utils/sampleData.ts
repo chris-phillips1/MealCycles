@@ -86,18 +86,22 @@ export const sampleRecipes: Recipe[] = [
 export const samplePlans: Plan[] = [
 	{
 		phase: 'menstrual',
-		recipeIds: ['10', '13']
+		recipeIds: ['10', '13'],
+		createdAt: new Date().toISOString()
 	},
 	{
 		phase: 'follicular',
-		recipeIds: ['11']
+		recipeIds: ['11'],
+		createdAt: new Date().toISOString()
 	},
 	{
 		phase: 'ovulation',
-		recipeIds: ['11']
+		recipeIds: ['11'],
+		createdAt: new Date().toISOString()
 	},
 	{
 		phase: 'luteal',
-		recipeIds: ['12']
+		recipeIds: ['12'],
+		createdAt: new Date().toISOString()
 	}
 ];

@@ -23,9 +23,11 @@ export interface Recipe {
 export interface Plan {
 	phase: CyclePhase;
 	recipeIds: string[];
+	createdAt: string;
 }
 
 export interface AppData {
+	cycleStartDate: string;
 	ingredients: Ingredient[];
 	recipes: Recipe[];
 	plan: Plan;
