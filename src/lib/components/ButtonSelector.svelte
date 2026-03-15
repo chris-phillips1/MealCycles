@@ -44,14 +44,14 @@
 	}
 
 	.selector-button:hover:not(.active) {
-		background: var(--bg-surface);
+		background: gray;
 		transform: translateY(-1px);
 	}
 
 	.selector-button.active {
-		background: var(--accent);
+		background: mediumpurple;
 		color: white;
-		border-color: var(--accent);
+		border-color: mediumpurple;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 </style>

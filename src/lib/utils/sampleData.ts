@@ -1,4 +1,4 @@
-import type { Ingredient, Recipe } from '$lib/types';
+import { type Ingredient, type RecipeIngredient, type Recipe, type Plan } from '$lib/types';
 
 export const sampleIngredients: Ingredient[] = [
 	{
@@ -25,7 +25,22 @@ export const sampleIngredients: Ingredient[] = [
 		id: '5',
 		name: 'Lentils',
 		phases: ['follicular', 'ovulation', 'luteal']
+	},
+	{
+		id: '6',
+		name: 'Steak',
+		phases: ['menstrual']
+	},
+	{
+		id: '7',
+		name: 'Potatoes',
+		phases: ['menstrual']
 	}
+];
+
+export const sampleRecipeIngredients: RecipeIngredient[] = [
+	{ ingredientId: '2', quantity: '1 fillet' },
+	{ ingredientId: '1', quantity: '2 cups' }
 ];
 
 export const sampleRecipes: Recipe[] = [
@@ -33,10 +48,7 @@ export const sampleRecipes: Recipe[] = [
 		id: '10',
 		name: 'Salmon & Spinach Bowl',
 		description: 'A simple iron-rich bowl great for the menstrual phase.',
-		ingredients: [
-			{ ingredientId: '2', quantity: '1 fillet' },
-			{ ingredientId: '1', quantity: '2 cups' }
-		],
+		ingredients: sampleRecipeIngredients,
 		phases: ['menstrual']
 	},
 	{
@@ -58,5 +70,34 @@ export const sampleRecipes: Recipe[] = [
 			{ ingredientId: '5', quantity: '1 cup cooked' }
 		],
 		phases: ['luteal']
+	},
+	{
+		id: '13',
+		name: 'Steak & Potatoes',
+		description: 'A classic iron-rich dish.',
+		ingredients: [
+			{ ingredientId: '6', quantity: '8 oz' },
+			{ ingredientId: '7', quantity: '1 medium' }
+		],
+		phases: ['menstrual']
+	}
+];
+
+export const samplePlans: Plan[] = [
+	{
+		phase: 'menstrual',
+		recipeIds: ['10', '13']
+	},
+	{
+		phase: 'follicular',
+		recipeIds: ['11']
+	},
+	{
+		phase: 'ovulation',
+		recipeIds: ['11']
+	},
+	{
+		phase: 'luteal',
+		recipeIds: ['12']
 	}
 ];

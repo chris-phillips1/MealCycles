@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/state.svelte';
+	import RecipeForm from '$lib/components/RecipeForm.svelte';
+
+	let recipeForm: RecipeForm;
 </script>
 
 <header>
 	<h1>Recipes</h1>
-	<button>Add Recipe</button>
+	<button onclick={() => recipeForm?.open()}>Add Recipe</button>
 </header>
+
+<RecipeForm bind:this={recipeForm} />
 
 {#if appState.recipes.length === 0}
 	<p>No recipes found.</p>
@@ -23,7 +28,7 @@
 					{/each}
 				</div>
 				<div class="actions">
-					<button>Edit</button>
+					<button onclick={() => recipeForm?.open(recipe)}>Edit</button>
 					<button class="danger">Delete</button>
 				</div>
 			</div>
