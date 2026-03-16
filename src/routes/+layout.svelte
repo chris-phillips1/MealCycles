@@ -1,6 +1,21 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
+	import { browser } from '$app/environment';
+	import { appState, STORAGE_KEY } from '$lib/stores/state.svelte';
+
+	$effect(() => {
+		if (!browser) return;
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				cycleStartDate: appState.cycleStartDate,
+				ingredients: appState.ingredients,
+				recipes: appState.recipes,
+				plan: appState.plan
+			})
+		);
+	});
 
 	let { children } = $props();
 </script>
@@ -11,8 +26,8 @@
 
 <nav>
 	<span class="wordmark">MealCycles</span>
-	<a href="/plan" class:active={page.url.pathname === '/plan'}>Plan</a>
 	<a href="/recipes" class:active={page.url.pathname.startsWith('/recipes')}>Recipes</a>
+	<a href="/plan" class:active={page.url.pathname === '/plan'}>Plan</a>
 	<a href="/grocery" class:active={page.url.pathname.startsWith('/grocery')}>Grocery</a>
 </nav>
 

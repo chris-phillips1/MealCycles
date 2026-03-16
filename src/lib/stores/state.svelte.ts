@@ -1,14 +1,14 @@
 import type { AppData, CyclePhase, Ingredient, Plan, Recipe } from '$lib/types';
 import { browser } from '$app/environment';
-import { sampleIngredients, samplePlans, sampleRecipes } from '$lib/utils/sampleData';
+import { sampleIngredients, samplePlan, sampleRecipes } from '$lib/utils/sampleData';
 
-const STORAGE_KEY = 'MealCycles';
+export const STORAGE_KEY = 'MealCycles';
 
 const defaultAppData: AppData = {
 	cycleStartDate: new Date().toISOString(),
 	ingredients: sampleIngredients,
 	recipes: sampleRecipes,
-	plan: samplePlans[0]
+	plan: samplePlan
 };
 
 function loadFromStorage(): AppData {
@@ -22,27 +22,11 @@ function loadFromStorage(): AppData {
 }
 
 class AppState {
-	cycleStartDate = $state<string>(loadFromStorage().cycleStartDate);
-	ingredients = $state<Ingredient[]>(loadFromStorage().ingredients);
-	recipes = $state<Recipe[]>(loadFromStorage().recipes);
-	plan = $state<Plan>(loadFromStorage().plan);
-
-	constructor() {
-		$effect.root(() => {
-			$effect(() => {
-				if (!browser) return;
-				localStorage.setItem(
-					STORAGE_KEY,
-					JSON.stringify({
-						cycleStartDate: this.cycleStartDate,
-						ingredients: this.ingredients,
-						recipes: this.recipes,
-						plan: this.plan
-					})
-				);
-			});
-		});
-	}
+	STORED_DATA = loadFromStorage();
+	cycleStartDate = $state<string>(this.STORED_DATA.cycleStartDate);
+	ingredients = $state<Ingredient[]>(this.STORED_DATA.ingredients);
+	recipes = $state<Recipe[]>(this.STORED_DATA.recipes);
+	plan = $state<Plan>(this.STORED_DATA.plan);
 
 	//Cycle
 	updateCycleStart(date: string) {
@@ -52,6 +36,10 @@ class AppState {
 	// Ingredients
 	addIngredient(ingredient: Omit<Ingredient, 'id'>) {
 		this.ingredients = [...this.ingredients, { ...ingredient, id: crypto.randomUUID() }];
+	}
+
+	removeIngredient(id: string) {
+		this.ingredients = this.ingredients.filter((i) => i.id !== id);
 	}
 
 	// Recipes
