@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/state.svelte';
 	import RecipeForm from '$lib/components/RecipeForm.svelte';
+	import RecipeCard from '$lib/components/RecipeCard.svelte';
 
 	let recipeForm: RecipeForm;
+	let recipeCard: RecipeCard;
 </script>
 
 <header>
@@ -11,30 +13,34 @@
 </header>
 
 <RecipeForm bind:this={recipeForm} />
+<RecipeCard
+	bind:this={recipeCard}
+	title="Recipe Name"
+	description="Recipe Description"
+	chipList={['Chip 1', 'Chip 2']}
+	primaryButton="Add to Plan"
+	secondaryButton="Edit"
+/>
 
-{#if appState.recipes.length === 0}
-	<p>No recipes found.</p>
-{:else}
-	<section class="list">
-		{#each appState.recipes as recipe (recipe.id)}
-			<div class="row">
-				<div class="info">
-					<span class="name">{recipe.name}</span>
-					<span class="description">{recipe.description}</span>
-				</div>
-				<div class="phases">
-					{#each recipe.phases as phase (phase)}
-						<span class="badge {phase}">{phase}</span>
-					{/each}
-				</div>
-				<div class="actions">
-					<button onclick={() => recipeForm?.open(recipe)}>Edit</button>
-					<button class="danger">Delete</button>
-				</div>
+<section class="list">
+	{#each appState.recipes as recipe (recipe.id)}
+		<div class="row">
+			<div class="info">
+				<span class="name">{recipe.name}</span>
+				<span class="description">{recipe.description}</span>
 			</div>
-		{/each}
-	</section>
-{/if}
+			<div class="phases">
+				{#each recipe.phases as phase (phase)}
+					<span class="badge {phase}">{phase}</span>
+				{/each}
+			</div>
+			<div class="actions">
+				<button onclick={() => recipeForm?.open(recipe)}>Edit</button>
+				<button class="danger">Delete</button>
+			</div>
+		</div>
+	{/each}
+</section>
 
 <style>
 	header {
