@@ -18,8 +18,8 @@
 	title="Recipe Name"
 	description="Recipe Description"
 	chipList={['Chip 1', 'Chip 2']}
-	primaryButton="Add to Plan"
-	secondaryButton="Edit"
+	onEdit={() => console.log('Edit')}
+	onAdd={() => console.log('Add')}
 />
 
 <section class="list">

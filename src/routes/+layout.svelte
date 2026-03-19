@@ -1,8 +1,9 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import { appState, STORAGE_KEY } from '$lib/stores/state.svelte';
+	import favicon from '$lib/assets/favicon.svg';
+	import '../reset.css';
 
 	$effect(() => {
 		if (!browser) return;
