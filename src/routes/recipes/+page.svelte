@@ -21,8 +21,7 @@
 			title={recipe.name}
 			description={recipe.description}
 			chipList={recipe.phases}
-			onClose={() => console.log('Delete')}
-			onEdit={() => console.log('Edit')}
+			onEdit={() => recipeForm.open(recipe)}
 			onAdd={() => console.log('Add to Plan')}
 		/>
 	{/each}

@@ -3,19 +3,15 @@
 		title,
 		description,
 		chipList,
-		onClose,
 		onEdit,
 		onAdd
 	}: {
 		title: string;
 		description: string;
 		chipList: string[];
-		onClose: () => void;
 		onEdit: () => void;
 		onAdd: () => void;
 	} = $props();
-
-	let menuOpen = $state(false);
 </script>
 
 <section>
@@ -33,12 +29,8 @@
 	<p>{description}</p>
 
 	<div class="actions">
+		<button type="button" onclick={onEdit}>Edit</button>
 		<button type="button" onclick={onAdd}>Add to Plan</button>
-		<button type="button" onclick={() => (menuOpen = !menuOpen)}>...</button>
-		{#if menuOpen}
-			<button type="button" onclick={onEdit}>Edit</button>
-			<button type="button" onclick={onClose}>Delete</button>
-		{/if}
 	</div>
 </section>
 
@@ -87,7 +79,22 @@
 
 	.actions {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		gap: 8px;
+	}
+
+	.actions button {
+		padding: 0.5rem 0.75rem;
+		border: none;
+		border-radius: 0.5rem;
+		background-color: #f0f0f0;
+		color: #333;
+		cursor: pointer;
+	}
+
+	.actions :last-child {
+		flex: 1;
+		background-color: mediumpurple;
+		color: #f9f9f9;
 	}
 </style>

@@ -3,8 +3,10 @@
 	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 	import { appState } from '$lib/stores/state.svelte';
+	import ConfirmDialog from './ConfirmDialog.svelte';
 
-	let dialog: HTMLDialogElement;
+	let formDialog: HTMLDialogElement;
+	let confirmDialog: ConfirmDialog;
 	let editingRecipe = $state<Recipe | null>(null);
 	let form = $state({
 		name: '',
@@ -33,12 +35,12 @@
 		form.quantities = editingRecipe
 			? Object.fromEntries(editingRecipe.ingredients.map((i) => [i.ingredientId, i.quantity]))
 			: {};
-		dialog?.showModal();
+		formDialog?.showModal();
 	}
 
 	export function closeDialog() {
-		console.log('closeDialog called', dialog);
-		dialog?.close();
+		console.log('closeDialog called', formDialog);
+		formDialog?.close();
 	}
 
 	function handleSubmit() {
@@ -64,8 +66,25 @@
 	}
 </script>
 
-<dialog bind:this={dialog}>
-	<h2>{editingRecipe ? 'Edit Recipe' : 'Add Recipe'}</h2>
+<ConfirmDialog
+	bind:this={confirmDialog}
+	title="Delete Recipe"
+	message="Are you sure you want to delete this recipe?"
+	onConfirm={() => {
+		console.log('Deleted');
+		formDialog.close();
+	}}
+/>
+
+<dialog bind:this={formDialog}>
+	<div class="title">
+		{#if editingRecipe}
+			<h2>Edit Recipe</h2>
+			<button type="button" onclick={() => confirmDialog.open()}>Delete</button>
+		{:else}
+			<h2>Add Recipe</h2>
+		{/if}
+	</div>
 	<input type="text" bind:value={form.name} placeholder="Name" />
 	<textarea bind:value={form.description} placeholder="Description"></textarea>
 
@@ -92,5 +111,12 @@
 	dialog[open] {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
 	}
 </style>
