@@ -4,7 +4,6 @@
 	import RecipeCard from '$lib/components/RecipeCard.svelte';
 
 	let recipeForm: RecipeForm;
-	let recipeCard: RecipeCard;
 </script>
 
 <header>
@@ -17,7 +16,6 @@
 <div class="recipe-grid">
 	{#each appState.recipes as recipe (recipe.id)}
 		<RecipeCard
-			bind:this={recipeCard}
 			title={recipe.name}
 			description={recipe.description}
 			chipList={recipe.phases}
@@ -33,19 +31,6 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 2rem;
-	}
-
-	header h1 {
-		margin: 0;
-		font-size: 2rem;
-	}
-
-	header button {
-		cursor: pointer;
-		padding: 0.5rem;
-		align-self: flex-end;
-		border: 1px solid black;
-		border-radius: 4px;
 	}
 
 	.recipe-grid {

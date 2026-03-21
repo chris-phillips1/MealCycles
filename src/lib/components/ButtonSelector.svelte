@@ -1,57 +1,38 @@
 <script lang="ts">
 	import { toggleArrayItem } from '$lib/utils/array';
-	let { label, buttonOptions, selectedButtons = $bindable() } = $props();
+	let { buttonOptions, selectedButtons = $bindable() } = $props();
 </script>
 
-<section class="selector-group">
-	<span class="selector-label">{label}</span>
-	<div class="selector-buttons">
-		{#each buttonOptions as buttonOption (buttonOption)}
-			<button
-				class="selector-button"
-				class:active={selectedButtons.includes(buttonOption)}
-				onclick={(e) => {
-					e.preventDefault();
-					selectedButtons = toggleArrayItem(selectedButtons, buttonOption);
-				}}>{buttonOption}</button
-			>
-		{/each}
-	</div>
+<section>
+	{#each buttonOptions as buttonOption (buttonOption)}
+		<button
+			type="button"
+			class:active={selectedButtons.includes(buttonOption)}
+			onclick={(e) => {
+				e.preventDefault();
+				selectedButtons = toggleArrayItem(selectedButtons, buttonOption);
+			}}>{buttonOption}</button
+		>
+	{/each}
 </section>
 
 <style>
-	.selector-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.selector-label {
-		display: block;
-		font-weight: 600;
-		font-size: 0.9rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.selector-buttons {
+	section {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
-	.selector-button {
+
+	button {
 		text-transform: capitalize;
+		border: 1px solid lightslategray;
+		border-radius: 0.5rem;
+		background-color: transparent;
+		padding: 0.125rem 0.25rem;
 	}
 
-	.selector-button:hover:not(.active) {
-		background: gray;
-		transform: translateY(-1px);
-	}
-
-	.selector-button.active {
-		background: mediumpurple;
-		color: white;
-		border-color: mediumpurple;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	button.active {
+		background-color: mediumpurple;
+		color: #f0f0f0;
 	}
 </style>

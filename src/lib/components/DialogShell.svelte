@@ -32,9 +32,7 @@
 
 <style>
 	dialog {
-		background: var(--bg-surface);
-		color: var(--text);
-		border: 1px solid var(--border);
+		border: 1px solid;
 		border-radius: 12px;
 		padding: 2rem;
 		min-width: 450px;

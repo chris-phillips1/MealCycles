@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { CYCLE_PHASES, type CyclePhase, type Recipe } from '$lib/types';
+	import { appState } from '$lib/stores/state.svelte';
 	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
-	import { appState } from '$lib/stores/state.svelte';
-	import ConfirmDialog from './ConfirmDialog.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let formDialog: HTMLDialogElement;
 	let confirmDialog: ConfirmDialog;
@@ -88,7 +88,7 @@
 	<input type="text" bind:value={form.name} placeholder="Name" />
 	<textarea bind:value={form.description} placeholder="Description"></textarea>
 
-	<ButtonSelector label="Phases" buttonOptions={CYCLE_PHASES} bind:selectedButtons={form.phases} />
+	<ButtonSelector buttonOptions={CYCLE_PHASES} bind:selectedButtons={form.phases} />
 
 	<MultiSelect
 		placeholder="Ingredients"
@@ -97,20 +97,35 @@
 	/>
 
 	{#each selectedIngredients as ingredient (ingredient.id)}
-		<div>
+		<div class="ingredient-table">
 			<span>{ingredient.name}</span>
 			<input type="text" bind:value={form.quantities[ingredient.id]} placeholder="e.g. 2 cups" />
+			<button type="button">X</button>
 		</div>
 	{/each}
 
-	<button type="button" onclick={closeDialog}>Cancel</button>
-	<button type="submit" onclick={handleSubmit}>{editingRecipe ? 'Update' : 'Add'} Recipe</button>
+	<div class="actions">
+		<button type="button" onclick={closeDialog}>Cancel</button>
+		<button type="submit" onclick={handleSubmit}>{editingRecipe ? 'Update' : 'Add'} Recipe</button>
+	</div>
 </dialog>
 
 <style>
 	dialog[open] {
 		display: flex;
 		flex-direction: column;
+		gap: 1rem;
+		border: none;
+		border-radius: 0.5rem;
+	}
+
+	button {
+		padding: 0.5rem 0.75rem;
+		border: none;
+		border-radius: 0.5rem;
+		background-color: #f0f0f0;
+		color: #333;
+		cursor: pointer;
 	}
 
 	.title {
@@ -118,5 +133,16 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 1rem;
+	}
+
+	.actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
+	}
+
+	.actions button[type='submit'] {
+		background-color: mediumpurple;
+		color: #f0f0f0;
 	}
 </style>

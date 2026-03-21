@@ -73,7 +73,6 @@
 		align-items: center;
 		gap: 8px;
 		border-radius: 6px;
-		background: var(--bg-surface-2);
 	}
 
 	input {
@@ -82,8 +81,6 @@
 
 	.badge {
 		flex-shrink: 0;
-		background: var(--bg-surface);
-		color: var(--accent);
 		font-size: 12px;
 		font-weight: 500;
 		border-radius: 32px;
@@ -97,8 +94,6 @@
 		top: calc(100% + 4px);
 		left: 0;
 		right: 0;
-		background: var(--bg-surface-2);
-		border: 1px solid var(--border);
 		border-radius: 6px;
 		list-style: none;
 		margin: 0;
@@ -109,21 +104,15 @@
 	}
 
 	li {
-		padding: 0;
 		font-size: 14px;
 		cursor: pointer;
-	}
-
-	li:hover {
-		background: var(--accent);
-		color: var(--text);
 	}
 
 	li button {
 		width: 100%;
 		background: none;
 		border: none;
-		padding: 8px 12px; /* move padding here from li, and remove it from li */
+		padding: 8px 12px;
 		font-size: 14px;
 		text-align: left;
 		cursor: pointer;
@@ -137,8 +126,7 @@
 		height: 15px;
 		flex-shrink: 0;
 		border-radius: 3px;
-		border: 1px solid var(--border);
-		background: var(--bg-surface);
+		border: 1px solid;
 		display: flex;
 		align-items: center;
 		justify-content: center;

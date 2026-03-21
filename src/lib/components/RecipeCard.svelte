@@ -19,7 +19,7 @@
 		<h2>{title}</h2>
 		<ul>
 			{#each chipList as chip (chip)}
-				<li>{chip}</li>
+				<li class={chip}>{chip}</li>
 			{/each}
 		</ul>
 	</header>
@@ -62,6 +62,23 @@
 		border: 1px solid #ccc;
 		border-radius: 999px;
 		font-size: 0.8rem;
+	}
+
+	.menstrual {
+		background-color: #ffb6c1;
+		color: #333;
+	}
+	.follicular {
+		background-color: #e6e6fa;
+		color: #333;
+	}
+	.ovulation {
+		background-color: #fffacd;
+		color: #333;
+	}
+	.luteal {
+		background-color: #ffd1dc;
+		color: #333;
 	}
 
 	hr {

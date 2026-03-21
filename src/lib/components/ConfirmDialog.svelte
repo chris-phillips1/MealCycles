@@ -37,7 +37,7 @@
 	<h2>{title}</h2>
 	<p>{message}</p>
 	<div class="actions">
-		<button type="button" class="secondary" onclick={close}>{cancelLabel}</button>
+		<button type="button" onclick={close}>{cancelLabel}</button>
 		<button type="button" class={variant} onclick={handleConfirm}>{confirmLabel}</button>
 	</div>
 </DialogShell>
@@ -50,7 +50,6 @@
 
 	p {
 		margin: 0 0 2rem 0;
-		color: var(--text-muted);
 		line-height: 1.5;
 	}
 
@@ -63,15 +62,6 @@
 	button {
 		padding: 0.6rem 1.25rem;
 		font-weight: 500;
-	}
-
-	.secondary {
-		background: var(--bg-surface-2);
-		border-color: var(--border);
-	}
-
-	.secondary:hover {
-		background: var(--bg);
 	}
 
 	.danger {
