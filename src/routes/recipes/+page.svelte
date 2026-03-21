@@ -20,7 +20,7 @@
 			description={recipe.description}
 			chipList={recipe.phases}
 			onEdit={() => recipeForm.open(recipe)}
-			onAdd={() => console.log('Add to Plan')}
+			onAdd={() => appState.addRecipeToPlan(recipe.id)}
 		/>
 	{/each}
 </div>

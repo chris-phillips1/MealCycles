@@ -90,19 +90,36 @@
 
 	<ButtonSelector buttonOptions={CYCLE_PHASES} bind:selectedButtons={form.phases} />
 
-	<MultiSelect
-		placeholder="Ingredients"
-		options={ingredientOptions}
-		bind:selected={form.ingredientIds}
-	/>
-
-	{#each selectedIngredients as ingredient (ingredient.id)}
-		<div class="ingredient-table">
-			<span>{ingredient.name}</span>
-			<input type="text" bind:value={form.quantities[ingredient.id]} placeholder="e.g. 2 cups" />
-			<button type="button">X</button>
+	<div class="ingredient-section">
+		<div class="picker-zone">
+			<MultiSelect
+				placeholder="Ingredients"
+				options={ingredientOptions}
+				bind:selected={form.ingredientIds}
+			/>
 		</div>
-	{/each}
+
+		{#if selectedIngredients.length > 0}
+			<div class="selected-zone">
+				{#each selectedIngredients as ingredient (ingredient.id)}
+					<div class="ingredient-row">
+						<span>{ingredient.name}</span>
+						<input
+							type="text"
+							bind:value={form.quantities[ingredient.id]}
+							placeholder="e.g. 2 cups"
+						/>
+						<button
+							type="button"
+							onclick={() => {
+								form.ingredientIds = form.ingredientIds.filter((id) => id !== ingredient.id);
+							}}>✕</button
+						>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</div>
 
 	<div class="actions">
 		<button type="button" onclick={closeDialog}>Cancel</button>
@@ -117,6 +134,8 @@
 		gap: 1rem;
 		border: none;
 		border-radius: 0.5rem;
+		max-height: 90vh;
+		width: min(560px, 90vw);
 	}
 
 	button {
@@ -133,6 +152,36 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 1rem;
+	}
+
+	.ingredient-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.picker-zone {
+		padding: 0.5rem;
+		border-bottom: 1px solid #e5e7eb;
+	}
+
+	.selected-zone {
+		max-height: 200px;
+		overflow-y: auto;
+		padding: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.ingredient-row {
+		display: grid;
+		grid-template-columns: 1fr 2fr auto;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.actions {

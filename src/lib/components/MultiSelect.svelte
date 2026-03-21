@@ -11,7 +11,6 @@
 		selected: string[];
 	} = $props();
 
-	let open = $state(false);
 	let query = $state('');
 
 	const filteredOptions = $derived(
@@ -23,44 +22,26 @@
 	}
 </script>
 
-<div
-	class="combo-root"
-	onfocusout={(e) => {
-		if (!e.currentTarget.contains(e.relatedTarget as Node)) open = false;
-	}}
->
+<div class="combo-root">
 	<div class="input-row">
-		<input
-			bind:value={query}
-			type="search"
-			{placeholder}
-			onfocus={() => (open = true)}
-			onkeydown={(e) => {
-				if (e.key === 'Escape') open = false;
-			}}
-		/>
+		<input bind:value={query} type="search" {placeholder} />
 		{#if selected.length > 0}
 			<span class="badge">{selected.length} selected</span>
 		{/if}
 	</div>
 
-	{#if open}
-		<ul class="dropdown" role="listbox" onmousedown={(e) => e.preventDefault()}>
-			{#each filteredOptions as option (option.value)}
-				<li role="option" aria-selected={isSelected(option)}>
-					<button
-						type="button"
-						onclick={() => (selected = toggleArrayItem(selected, option.value))}
-					>
-						<span class="checkbox">
-							{#if isSelected(option)}✓{/if}
-						</span>
-						{option.label}
-					</button>
-				</li>
-			{/each}
-		</ul>
-	{/if}
+	<ul class="list" role="listbox" onmousedown={(e) => e.preventDefault()}>
+		{#each filteredOptions as option (option.value)}
+			<li role="option" aria-selected={isSelected(option)}>
+				<button type="button" onclick={() => (selected = toggleArrayItem(selected, option.value))}>
+					<span class="checkbox">
+						{#if isSelected(option)}✓{/if}
+					</span>
+					{option.label}
+				</button>
+			</li>
+		{/each}
+	</ul>
 </div>
 
 <style>
@@ -89,18 +70,13 @@
 		white-space: nowrap;
 	}
 
-	.dropdown {
-		position: absolute;
-		top: calc(100% + 4px);
-		left: 0;
-		right: 0;
-		border-radius: 6px;
+	.list {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		max-height: 220px;
+		max-height: 160px; /* fixed height — no layout jumps */
 		overflow-y: auto;
-		z-index: 100;
+		border-radius: 6px;
 	}
 
 	li {
