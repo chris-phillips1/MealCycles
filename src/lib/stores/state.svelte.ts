@@ -35,7 +35,10 @@ class AppState {
 
 	// Ingredients
 	addIngredient(ingredient: Omit<Ingredient, 'id'>) {
-		this.ingredients = [...this.ingredients, { ...ingredient, id: crypto.randomUUID() }];
+		const newIngredient = { ...ingredient, id: crypto.randomUUID() };
+		this.ingredients = [...this.ingredients, newIngredient];
+
+		return newIngredient;
 	}
 
 	removeIngredient(id: string) {

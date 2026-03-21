@@ -15,6 +15,8 @@
 		ingredientIds: [] as string[],
 		quantities: {} as Record<string, string>
 	});
+	let showNewIngredientForm = $state(false);
+	let newIngredient = $state({ name: '', phases: [] as CyclePhase[] });
 
 	const ingredientOptions = $derived(
 		appState.ingredients.map((i) => ({ label: i.name, value: i.id }))
@@ -25,6 +27,23 @@
 			.map((id) => appState.ingredients.find((i) => i.id === id))
 			.filter((i) => i !== undefined)
 	);
+
+	function submitNewIngredient() {
+		const trimmed = newIngredient.name.trim();
+		if (!trimmed) return;
+
+		const created = appState.addIngredient({
+			name: trimmed,
+			phases: newIngredient.phases
+		});
+
+		// Auto-select the new ingredient in the recipe
+		form.ingredientIds = [...form.ingredientIds, created.id];
+
+		// Reset and close
+		newIngredient = { name: '', phases: [] };
+		showNewIngredientForm = false;
+	}
 
 	export function open(recipe?: Recipe) {
 		editingRecipe = recipe ?? null;
@@ -99,6 +118,30 @@
 			/>
 		</div>
 
+		{#if showNewIngredientForm}
+			<div class="new-ingredient-form">
+				<input
+					type="text"
+					bind:value={newIngredient.name}
+					placeholder="Ingredient name"
+					autofocus
+				/>
+				<ButtonSelector buttonOptions={CYCLE_PHASES} bind:selectedButtons={newIngredient.phases} />
+				<div class="new-ingredient-actions">
+					<button type="button" onclick={() => (showNewIngredientForm = false)}> Cancel </button>
+					<button type="button" onclick={submitNewIngredient}> Add </button>
+				</div>
+			</div>
+		{:else}
+			<button
+				type="button"
+				class="create-ingredient-btn"
+				onclick={() => (showNewIngredientForm = true)}
+			>
+				+ Create new ingredient
+			</button>
+		{/if}
+
 		{#if selectedIngredients.length > 0}
 			<div class="selected-zone">
 				{#each selectedIngredients as ingredient (ingredient.id)}
@@ -152,6 +195,36 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 1rem;
+	}
+
+	.create-ingredient-btn {
+		align-self: flex-start;
+		background: none;
+		border: none;
+		color: mediumpurple;
+		font-size: 0.85rem;
+		padding: 0;
+		cursor: pointer;
+	}
+
+	.create-ingredient-btn:hover {
+		text-decoration: underline;
+	}
+
+	.new-ingredient-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 0.75rem;
+		border: 1px dashed #c4b5fd;
+		border-radius: 8px;
+		background-color: #faf5ff;
+	}
+
+	.new-ingredient-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
 	}
 
 	.ingredient-section {
