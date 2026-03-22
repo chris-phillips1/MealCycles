@@ -22,6 +22,7 @@
 </script>
 
 <svelte:head>
+	<title>MealCycles</title>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
