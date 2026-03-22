@@ -53,7 +53,7 @@
 	<section class="browser">
 		<header>
 			<h1>Recipes for <span class="phase">{currentPhase}</span></h1>
-			<PhaseBadge phase={currentPhase} active={true} />
+			<PhaseBadge phase={currentPhase} />
 		</header>
 
 		{#if filteredRecipes.length === 0}

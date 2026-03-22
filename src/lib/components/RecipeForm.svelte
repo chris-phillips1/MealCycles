@@ -5,8 +5,9 @@
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import PhaseBadge from './PhaseBadge.svelte';
 	import { toggleArrayItem } from '$lib/utils/array';
+	import FormDialog from './FormDialog.svelte';
 
-	let formDialog: HTMLDialogElement;
+	let formDialog: FormDialog;
 	let confirmDialog: ConfirmDialog;
 	let editingRecipe = $state<Recipe | null>(null);
 	let form = $state({
@@ -55,7 +56,7 @@
 		form.quantities = editingRecipe
 			? Object.fromEntries(editingRecipe.ingredients.map((i) => [i.ingredientId, i.quantity]))
 			: {};
-		formDialog?.showModal();
+		formDialog?.open();
 	}
 
 	export function closeDialog() {
@@ -95,15 +96,16 @@
 	}}
 />
 
-<dialog bind:this={formDialog}>
-	<div class="title">
-		{#if editingRecipe}
-			<h2>Edit Recipe</h2>
-			<button type="button" onclick={() => confirmDialog.open()}>Delete</button>
-		{:else}
-			<h2>Add Recipe</h2>
-		{/if}
-	</div>
+<FormDialog bind:this={formDialog}>
+	{#snippet title()}
+		<div class="title">
+			<h2>{editingRecipe ? 'Edit Recipe' : 'Add Recipe'}</h2>
+			{#if editingRecipe}
+				<button type="button" onclick={() => confirmDialog.open()}>Delete</button>
+			{/if}
+		</div>
+	{/snippet}
+
 	<input type="text" bind:value={form.name} placeholder="Name" />
 	<textarea bind:value={form.description} placeholder="Description"></textarea>
 
@@ -179,19 +181,9 @@
 		<button type="button" onclick={closeDialog}>Cancel</button>
 		<button type="submit" onclick={handleSubmit}>{editingRecipe ? 'Update' : 'Add'} Recipe</button>
 	</div>
-</dialog>
+</FormDialog>
 
 <style>
-	dialog[open] {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		border: none;
-		border-radius: 0.5rem;
-		max-height: 90vh;
-		width: min(560px, 90vw);
-	}
-
 	button {
 		padding: 0.5rem 0.75rem;
 		border: none;

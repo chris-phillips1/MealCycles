@@ -5,7 +5,7 @@
 		phase,
 		active = false,
 		onclick
-	}: { phase: CyclePhase; active: boolean; onclick?: () => void } = $props();
+	}: { phase: CyclePhase; active?: boolean; onclick?: () => void } = $props();
 </script>
 
 {#if onclick}

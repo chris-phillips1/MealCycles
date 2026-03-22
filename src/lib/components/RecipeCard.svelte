@@ -21,7 +21,7 @@
 	<header>
 		<h2>{title}</h2>
 		{#each phases as phase (phase)}
-			<PhaseBadge phase={phase as CyclePhase} active={true} />
+			<PhaseBadge phase={phase as CyclePhase} />
 		{/each}
 	</header>
 

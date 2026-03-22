@@ -38,7 +38,7 @@ export const sampleIngredients: Ingredient[] = [
 	}
 ];
 
-export const sampleRecipeIngredients: RecipeIngredient[] = [
+const sampleRecipeIngredients: RecipeIngredient[] = [
 	{ ingredientId: '2', quantity: '1 fillet' },
 	{ ingredientId: '1', quantity: '2 cups' }
 ];
