@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { CYCLE_PHASES, type CyclePhase, type Recipe } from '$lib/types';
 	import { appState } from '$lib/stores/state.svelte';
-	import ButtonSelector from '$lib/components/ButtonSelector.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import PhaseBadge from './PhaseBadge.svelte';
+	import { toggleArrayItem } from '$lib/utils/array';
 
 	let formDialog: HTMLDialogElement;
 	let confirmDialog: ConfirmDialog;
@@ -88,9 +89,9 @@
 	bind:this={confirmDialog}
 	title="Delete Recipe"
 	message="Are you sure you want to delete this recipe?"
-	onConfirm={(id) => {
+	onConfirm={() => {
+		if (editingRecipe) appState.removeRecipe(editingRecipe.id);
 		formDialog.close();
-		appState.removeRecipe(id);
 	}}
 />
 
@@ -106,7 +107,15 @@
 	<input type="text" bind:value={form.name} placeholder="Name" />
 	<textarea bind:value={form.description} placeholder="Description"></textarea>
 
-	<ButtonSelector buttonOptions={CYCLE_PHASES} bind:selectedButtons={form.phases} />
+	<div class="phase-picker">
+		{#each CYCLE_PHASES as phase (phase)}
+			<PhaseBadge
+				{phase}
+				active={form.phases.includes(phase)}
+				onclick={() => (form.phases = toggleArrayItem(form.phases, phase))}
+			/>
+		{/each}
+	</div>
 
 	<div class="ingredient-section">
 		<div class="picker-zone">
@@ -119,13 +128,16 @@
 
 		{#if showNewIngredientForm}
 			<div class="new-ingredient-form">
-				<input
-					type="text"
-					bind:value={newIngredient.name}
-					placeholder="Ingredient name"
-					autofocus
-				/>
-				<ButtonSelector buttonOptions={CYCLE_PHASES} bind:selectedButtons={newIngredient.phases} />
+				<input type="text" bind:value={newIngredient.name} placeholder="Ingredient name" />
+				<div class="phase-picker">
+					{#each CYCLE_PHASES as phase (phase)}
+						<PhaseBadge
+							{phase}
+							active={newIngredient.phases.includes(phase)}
+							onclick={() => (newIngredient.phases = toggleArrayItem(newIngredient.phases, phase))}
+						/>
+					{/each}
+				</div>
 				<div class="new-ingredient-actions">
 					<button type="button" onclick={() => (showNewIngredientForm = false)}> Cancel </button>
 					<button type="button" onclick={submitNewIngredient}> Add </button>
@@ -218,6 +230,12 @@
 		border: 1px dashed #c4b5fd;
 		border-radius: 8px;
 		background-color: #faf5ff;
+	}
+
+	.phase-picker {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
 	}
 
 	.new-ingredient-actions {

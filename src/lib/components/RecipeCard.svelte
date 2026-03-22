@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { type CyclePhase } from '$lib/types';
 	import PhaseBadge from './PhaseBadge.svelte';
 
 	let {
@@ -19,7 +20,9 @@
 <section>
 	<header>
 		<h2>{title}</h2>
-		<PhaseBadge {phases} />
+		{#each phases as phase (phase)}
+			<PhaseBadge phase={phase as CyclePhase} active={true} />
+		{/each}
 	</header>
 
 	<hr />

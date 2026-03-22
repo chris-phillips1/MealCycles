@@ -1,43 +1,57 @@
 <script lang="ts">
-	let { phases }: { phases: string[] } = $props();
+	import type { CyclePhase } from '$lib/types';
+
+	let {
+		phase,
+		active = false,
+		onclick
+	}: { phase: CyclePhase; active: boolean; onclick?: () => void } = $props();
 </script>
 
-<ul>
-	{#each phases as phase (phase)}
-		<li class={phase}>{phase}</li>
-	{/each}
-</ul>
+{#if onclick}
+	<button class="badge {phase}" class:active {onclick}>{phase}</button>
+{:else}
+	<span class="badge {phase}" class:active>{phase}</span>
+{/if}
 
 <style>
-	ul {
-		list-style: none;
-		padding: 0;
-		display: flex;
-		gap: 4px;
-		flex-wrap: wrap;
-	}
-
-	ul li {
+	.badge {
 		padding: 2px 12px;
 		border: 1px solid #ccc;
 		border-radius: 999px;
 		font-size: 0.8rem;
+		text-transform: capitalize;
+		background-color: transparent;
+		color: #333;
 	}
 
-	.menstrual {
+	button.badge {
+		cursor: pointer;
+	}
+
+	span.menstrual {
 		background-color: #ffb6c1;
-		color: #333;
 	}
-	.follicular {
+	span.follicular {
 		background-color: #e6e6fa;
-		color: #333;
 	}
-	.ovulation {
+	span.ovulation {
 		background-color: #fffacd;
-		color: #333;
 	}
-	.luteal {
+	span.luteal {
 		background-color: #ffd1dc;
-		color: #333;
+	}
+
+	button.menstrual.active {
+		background-color: #ffb6c1;
+	}
+	button.follicular.active {
+		background-color: #e6e6fa;
+	}
+	button.ovulation.active {
+		background-color: #fffacd;
+	}
+	button.luteal.active {
+		background-color: #ffd1dc;
 	}
 </style>
