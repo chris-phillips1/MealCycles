@@ -18,7 +18,7 @@
 		<RecipeCard
 			title={recipe.name}
 			description={recipe.description}
-			chipList={recipe.phases}
+			phases={recipe.phases}
 			onEdit={() => recipeForm.open(recipe)}
 			onAdd={() => appState.addRecipeToPlan(recipe.id)}
 		/>

@@ -1,14 +1,16 @@
 <script lang="ts">
+	import PhaseBadge from './PhaseBadge.svelte';
+
 	let {
 		title,
 		description,
-		chipList,
+		phases,
 		onEdit,
 		onAdd
 	}: {
 		title: string;
 		description: string;
-		chipList: string[];
+		phases: string[];
 		onEdit: () => void;
 		onAdd: () => void;
 	} = $props();
@@ -17,11 +19,7 @@
 <section>
 	<header>
 		<h2>{title}</h2>
-		<ul>
-			{#each chipList as chip (chip)}
-				<li class={chip}>{chip}</li>
-			{/each}
-		</ul>
+		<PhaseBadge {phases} />
 	</header>
 
 	<hr />
@@ -47,38 +45,6 @@
 	h2 {
 		font-weight: 500;
 		margin-bottom: 0.5rem;
-	}
-
-	header ul {
-		list-style: none;
-		padding: 0;
-		display: flex;
-		gap: 4px;
-		flex-wrap: wrap;
-	}
-
-	header ul li {
-		padding: 2px 12px;
-		border: 1px solid #ccc;
-		border-radius: 999px;
-		font-size: 0.8rem;
-	}
-
-	.menstrual {
-		background-color: #ffb6c1;
-		color: #333;
-	}
-	.follicular {
-		background-color: #e6e6fa;
-		color: #333;
-	}
-	.ovulation {
-		background-color: #fffacd;
-		color: #333;
-	}
-	.luteal {
-		background-color: #ffd1dc;
-		color: #333;
 	}
 
 	hr {

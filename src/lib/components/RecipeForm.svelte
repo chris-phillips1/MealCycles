@@ -58,7 +58,6 @@
 	}
 
 	export function closeDialog() {
-		console.log('closeDialog called', formDialog);
 		formDialog?.close();
 	}
 
@@ -89,9 +88,9 @@
 	bind:this={confirmDialog}
 	title="Delete Recipe"
 	message="Are you sure you want to delete this recipe?"
-	onConfirm={() => {
-		console.log('Deleted');
+	onConfirm={(id) => {
 		formDialog.close();
+		appState.removeRecipe(id);
 	}}
 />
 
